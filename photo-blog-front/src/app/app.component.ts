@@ -17,6 +17,6 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.blogPost$ = this.http.get('http://localhost:1337/api/posts')
+    this.blogPost$ = this.http.get('https://photoblogapi.bieda.it/api/posts')
   }
 }

@@ -1,1 +1,56 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+:root {
+  --secondary-color: #d45f2b;
+  --primary-color-900: #1b222c;
+  --primary-color-500: #272e36;
+  --primary-color-400: #363f48;
+  --light-text-color: #e6e7e9;
+
+
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 3rem;
+
+  /* Line heights. */
+  --line-height-sm: 1.25;
+  --line-height-md: 1.5;
+
+  /* Letter spacings. */
+  --letter-spacing-sm: 0.05em;
+  --letter-spacing-md: 0.1em;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-md);
+  color: var(--light-text-color);
+  background-color: var(--primary-color-500);
+}
+
+h1,
+.h1 {
+  font-family: var(--font-family-serif);
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-sm);
+}
+
+h2,
+.h2 {
+  font-family: var(--font-family-serif);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-sm);
+}
+
+.responsive-img {
+  width: 100%;
+  height: auto;
+}
+

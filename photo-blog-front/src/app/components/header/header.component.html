@@ -1,0 +1,17 @@
+<nav  [class.mobile-view]="mobileView">
+  <ul>
+
+    <li class="page-title">
+      <fa-icon (click)="mobileView = !mobileView" [icon]="faBars"></fa-icon>
+      <h1>Spacephotographs</h1>
+    </li>
+    <div class="categories">
+      <li>
+        Nebulae
+      </li>
+      <li>
+        Galaxies
+      </li>
+    </div>
+  </ul>
+</nav>

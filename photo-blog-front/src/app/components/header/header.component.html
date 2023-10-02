@@ -1,17 +1,16 @@
-<nav  [class.mobile-view]="mobileView">
-  <ul>
+<mat-toolbar color="primary">
+  <span [routerLink]="['']">Main page</span>
+  <span class="example-spacer"></span>
+  <ng-container class="categories" *ngIf="categories$ | async as categories">
+    <ng-container *ngFor="let category of categories.data">
+      <a *ngIf="!category.categories.length" mat-button [routerLink]="['/categories', category.code]">{{category.name}}</a>
+      <button *ngIf="category.categories.length" mat-button [matMenuTriggerFor]="aboveMenu">{{category.name}}</button>
+      <mat-menu #aboveMenu="matMenu" yPosition="above">
+        <ng-container *ngFor="let subCategory of category.categories">
+            <a  mat-menu-item  [routerLink]="['/categories', subCategory.code]">{{subCategory.name}}</a>
+          </ng-container>
+      </mat-menu>
+    </ng-container>
+  </ng-container>
 
-    <li class="page-title">
-      <fa-icon (click)="mobileView = !mobileView" [icon]="faBars"></fa-icon>
-      <h1>Spacephotographs</h1>
-    </li>
-    <div class="categories">
-      <li>
-        Nebulae
-      </li>
-      <li>
-        Galaxies
-      </li>
-    </div>
-  </ul>
-</nav>
+</mat-toolbar>

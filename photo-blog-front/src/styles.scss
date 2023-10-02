@@ -1,5 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
+@include mat.core();
+
+// Define a dark theme
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: mat.define-palette(mat.$pink-palette),
+    accent: mat.define-palette(mat.$blue-grey-palette),
+  ),
+  // Only include `typography` and `density` in the default dark theme.
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+// Define a light theme
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: mat.define-palette(mat.$indigo-palette),
+    accent: mat.define-palette(mat.$pink-palette),
+  ),
+));
+
+// Apply the dark theme by default
+@include mat.core-theme($dark-theme);
+@include mat.button-theme($dark-theme);
+
+// Apply the light theme only when the user prefers light themes.
+@media (prefers-color-scheme: light) {
+  // Use the `-color` mixins to only apply color styles without reapplying the same
+  // typography and density styles.
+  @include mat.core-color($light-theme);
+  @include mat.button-color($light-theme);
+}
 
 :root {
   --secondary-color: #d45f2b;
@@ -26,31 +59,7 @@
   --letter-spacing-md: 0.1em;
 }
 
-body {
-  margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-md);
-  color: var(--light-text-color);
-  background-color: var(--primary-color-500);
-}
 
-h1,
-.h1 {
-  font-family: var(--font-family-serif);
-  font-size: var(--font-size-3xl);
-  line-height: var(--line-height-sm);
-}
 
-h2,
-.h2 {
-  font-family: var(--font-family-serif);
-  font-size: var(--font-size-2xl);
-  line-height: var(--line-height-sm);
-}
-
-.responsive-img {
-  width: 100%;
-  height: auto;
-}
-
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

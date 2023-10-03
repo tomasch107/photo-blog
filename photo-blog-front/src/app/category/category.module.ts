@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoryComponent } from './category/category.component';
 import {CategoryRoutingModule} from "./category-routing.module";
+import {MatCardModule} from "@angular/material/card";
 
 
 
@@ -11,7 +12,8 @@ import {CategoryRoutingModule} from "./category-routing.module";
   ],
   imports: [
     CommonModule,
-    CategoryRoutingModule
+    CategoryRoutingModule,
+    MatCardModule
   ]
 })
 export class CategoryModule { }

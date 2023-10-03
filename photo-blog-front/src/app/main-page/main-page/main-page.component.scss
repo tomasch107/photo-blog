@@ -1,4 +1,10 @@
-.header-img{
-  max-height: 60vh;
-  object-fit: cover;
+main {
+  padding-top: 10em;
+  padding-inline: 2em;
+}
+
+.large-button {
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border: solid 2px white;
 }

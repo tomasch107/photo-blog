@@ -1,16 +1,30 @@
-<mat-toolbar color="primary">
-  <span [routerLink]="['']">Main page</span>
-  <span class="example-spacer"></span>
-  <ng-container class="categories" *ngIf="categories$ | async as categories">
-    <ng-container *ngFor="let category of categories.data">
-      <a *ngIf="!category.categories.length" mat-button [routerLink]="['/categories', category.code]">{{category.name}}</a>
-      <button *ngIf="category.categories.length" mat-button [matMenuTriggerFor]="aboveMenu">{{category.name}}</button>
-      <mat-menu #aboveMenu="matMenu" yPosition="above">
-        <ng-container *ngFor="let subCategory of category.categories">
-            <a  mat-menu-item  [routerLink]="['/categories', subCategory.code]">{{subCategory.name}}</a>
-          </ng-container>
-      </mat-menu>
-    </ng-container>
-  </ng-container>
+<!--<nav>-->
+<!--  <span [routerLink]="['']">Main page</span>-->
+<!--  <span class="example-spacer"></span>-->
+<!--  <ng-container class="categories" *ngIf="categories$ | async as categories">-->
+<!--    <ng-container *ngFor="let category of categories.data">-->
+<!--      <a *ngIf="!category.categories.length" [routerLink]="['/categories', category.code]">{{category.name}}</a>-->
+<!--      <button *ngIf="category.categories.length" >{{category.name}}</button>-->
+<!--        <ng-container *ngFor="let subCategory of category.categories">-->
+<!--            <a  [routerLink]="['/categories', subCategory.code]">{{subCategory.name}}</a>-->
+<!--          </ng-container>-->
+<!--    </ng-container>-->
+<!--  </ng-container>-->
 
-</mat-toolbar>
+<!--</nav>-->
+<header class="primary-header flex">
+  <div>
+<!--    <img height="40" src="/assets/shared/telescope-svgrepo-com.svg" alt="space tourism logo" class="logo">-->
+  </div>
+  <button #navTogle class="mobile-nav-toggle" (click)="mobileToggle()" aria-controls="primary-navigation"><span class="sr-only" aria-expanded="false">Menu</span></button>
+  <nav>
+    <ul #nav id="primary-navigation" data-visible="false" class="primary-navigation underline-indicators flex">
+      <li  [routerLink]="['']" [class.active]="isRouterLinkActive()" ><a class="ff-sans-cond uppercase text-white letter-spacing-2">Home</a></li>
+        <ng-container class="categories" *ngIf="categories$ | async as categories">
+          <ng-container *ngFor="let category of categories.data">
+            <li [routerLink]="['/categories', category.code]" [class.active]="isRouterLinkActive(category)"><a  class="ff-sans-cond uppercase text-white letter-spacing-2" >{{category.name}}</a></li>
+          </ng-container>
+        </ng-container>
+    </ul>
+  </nav>
+</header>

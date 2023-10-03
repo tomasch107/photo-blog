@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, Renderer2, ViewChild} from '@angular/core';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import {CategoryService} from "../../services/category.service";
+import {Category} from "../../model/category.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-header',
@@ -8,11 +10,33 @@ import {CategoryService} from "../../services/category.service";
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  protected readonly faBars = faBars;
 
   mobileView = false;
 
+  @ViewChild('navTogle', {static: false}) navToggle: ElementRef | undefined;
+  @ViewChild('nav', {static: false}) nav: ElementRef | undefined;
   categories$ = this.categoryService.getAllCategories();
-  constructor(private categoryService: CategoryService) {
+  constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router) {
+  }
+
+  mobileToggle() {
+    const visiblity = this.nav?.nativeElement.getAttribute("data-visible");
+    if (visiblity === "false") {
+      this.renderer2.setAttribute(this.nav?.nativeElement, "data-visible", String(true))
+      this.renderer2.setAttribute(this.navToggle?.nativeElement, "aria-expanded", String(true))
+    } else {
+      this.renderer2.setAttribute(this.nav?.nativeElement, "data-visible", String(false))
+      this.renderer2.setAttribute(this.navToggle?.nativeElement, "aria-expanded", String(false))
+    }
+  }
+
+
+  isRouterLinkActive(category?: Category): boolean {
+    const url = this.router.url;
+    if (category) {
+      return url.includes(category.code);
+    } else {
+      return !url || url.length <=1;
+    }
   }
 }

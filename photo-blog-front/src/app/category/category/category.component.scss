@@ -1,6 +1,14 @@
+@import "src/styles/mixins.scss";
+
 ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  padding: 1em;
+  gap: 1em;
+  @include media-xs-down() {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+
+  }
 }
 
 li {

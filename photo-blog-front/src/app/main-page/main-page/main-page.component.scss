@@ -1,6 +1,13 @@
+@import "src/styles/mixins.scss";
+
+
 main {
   padding-top: 10em;
   padding-inline: 2em;
+
+  @include media-sm-down {
+    padding-inline: 1em;
+  }
 }
 
 .large-button {

@@ -5,6 +5,7 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Observable} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {DOCUMENT} from "@angular/common";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-category',
@@ -16,6 +17,8 @@ export class CategoryComponent implements OnInit{
   constructor(private categoryService: CategoryService,
                private route: ActivatedRoute, private renderer2: Renderer2,  @Inject(DOCUMENT) private document: Document) {
   }
+
+  baseUrl = environment.baseUrl;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {

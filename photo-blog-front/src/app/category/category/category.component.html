@@ -4,7 +4,7 @@
 
     <li>
       <h3>{{post.title}}</h3>
-      <img src="http://localhost:1337{{post.images[0].formats['medium'].url}}"/>
+      <img src="{{baseUrl}}{{post.images[0].formats['medium'].url}}"/>
     </li>
   </ul>
 </ng-container>

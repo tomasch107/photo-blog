@@ -9,6 +9,10 @@ const routes: Routes = [
   {
     path: 'categories',
     loadChildren: () => import('./category/category.module').then(m => m.CategoryModule)
+  },
+  {
+    path: 'images',
+    loadChildren: () => import('./image/image.module').then(m => m.ImageModule)
   }
 ];
 @NgModule({

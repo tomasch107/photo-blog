@@ -1,0 +1,9 @@
+
+<ng-container *ngIf="posts$ | async as posts">
+  <ng-container *ngIf="posts.data[0] as post">
+    <img src="{{baseUrl}}{{post.images[0].formats['large'].url}}">
+
+  </ng-container>
+
+
+</ng-container>

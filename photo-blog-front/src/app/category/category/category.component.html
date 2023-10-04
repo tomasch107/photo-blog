@@ -1,10 +1,8 @@
 <ng-container *ngIf="posts$ | async as posts">
-  <ul *ngFor="let post of posts.data">
-
-
-    <li>
-      <h3>{{post.title}}</h3>
-      <img src="{{baseUrl}}{{post.images[0].formats['medium'].url}}"/>
+  <ul>
+    <li  *ngFor="let post of posts.data" [routerLink]="['/images', post.slug]">
+      <img src="{{baseUrl}}{{post.images[0].formats['medium'].url}}">
+      <span class="ff-sans-cond  fs-400 "> {{post.title}} </span>
     </li>
   </ul>
 </ng-container>

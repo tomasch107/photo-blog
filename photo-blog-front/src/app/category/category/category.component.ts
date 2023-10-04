@@ -12,10 +12,15 @@ import {environment} from "../../../environments/environment";
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent implements OnInit{
+export class CategoryComponent implements OnInit {
   posts$: Observable<ApiPaginatedResponse<Post>> | undefined;
-  constructor(private categoryService: CategoryService,
-               private route: ActivatedRoute, private renderer2: Renderer2,  @Inject(DOCUMENT) private document: Document) {
+
+  constructor(
+    private categoryService: CategoryService,
+    private route: ActivatedRoute,
+    private renderer2: Renderer2,
+    @Inject(DOCUMENT) private document: Document
+  ) {
   }
 
   baseUrl = environment.baseUrl;
@@ -29,6 +34,7 @@ export class CategoryComponent implements OnInit{
     })
 
     this.renderer2.removeClass(document.body, 'home');
+    this.renderer2.removeClass(document.body, 'image');
     this.renderer2.addClass(document.body, 'category');
 
   }

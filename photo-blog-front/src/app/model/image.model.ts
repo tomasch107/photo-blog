@@ -21,4 +21,5 @@ export interface Post {
   locale: string;
   title:string;
   description:string;
+  slug:string;
 }

@@ -2,6 +2,7 @@
 :root {
   /* colors */
   --clr-dark: 230 35% 7%;
+  --clr-gray: 234, 0%, 22%;
   --clr-light: 231 77% 90%;
   --clr-white: 0 0% 100%;
 
@@ -243,6 +244,7 @@ select {
 body {
   background-size: cover;
   background-position: bottom center;
+  background-attachment: fixed;
 }
 /* home */
 .home {
@@ -250,5 +252,9 @@ body {
 }
 
 .category {
-  background-image: url(/assets/home/background-home-desktop.jpg);
+  background-image: url(/assets/images/fireworks.jpg);
+}
+
+.image {
+  background-color: hsl( var(--clr-gray) );
 }

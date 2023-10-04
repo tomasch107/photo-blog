@@ -20,6 +20,7 @@ export class MainPageComponent implements OnInit{
   ngOnInit() {
     this.renderer2.addClass(document.body, 'home');
     this.renderer2.removeClass(document.body, 'category');
+    this.renderer2.removeClass(document.body, 'image');
   }
 
 }

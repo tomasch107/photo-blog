@@ -2,6 +2,8 @@
 export interface BaseImage {
   id: string;
   url:string;
+  width:string;
+  height:string;
 }
 
 export interface Image extends BaseImage {

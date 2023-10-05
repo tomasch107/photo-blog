@@ -10,14 +10,14 @@ ul {
   }
 
   @include media-sm-down() {
-    padding: 3em;
+    padding-top: 3em;
   }
 }
 
 li {
   list-style: none;
   position: relative;
-
+  border: 2px solid white;
   span {
     visibility: hidden;
     opacity: 0;

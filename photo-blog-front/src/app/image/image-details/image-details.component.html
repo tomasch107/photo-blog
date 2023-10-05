@@ -1,9 +1,11 @@
 
-<ng-container *ngIf="posts$ | async as posts">
-  <ng-container *ngIf="posts.data[0] as post">
-    <img src="{{baseUrl}}{{post.images[0].formats['large'].url}}">
-
+<div class="container">
+  <ng-container *ngIf="posts$ | async as posts">
+    <ng-container *ngIf="posts.data[0] as post">
+      <img (click)="openImage(post.images)" src="{{baseUrl}}{{post.images[0].formats['large'].url}}">
+      <h1>{{post.title}}</h1>
+      <markdown [data]="post.description"></markdown>
+      <app-photoswipe #photoSwipe></app-photoswipe>
+    </ng-container>
   </ng-container>
-
-
-</ng-container>
+</div>

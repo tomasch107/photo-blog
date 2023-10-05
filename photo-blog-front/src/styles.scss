@@ -253,8 +253,12 @@ body {
 
 .category {
   background-image: url(/assets/images/fireworks.jpg);
+  -webkit-backdrop-filter: blur(.3rem);
+  backdrop-filter: blur(.3rem);
 }
 
 .image {
-  background-color: hsl( var(--clr-gray) );
+  background-image: url(/assets/images/fireworks.jpg);
+  -webkit-backdrop-filter: blur(.3rem);
+  backdrop-filter: blur(.3rem);
 }

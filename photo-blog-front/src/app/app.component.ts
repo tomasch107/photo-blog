@@ -13,7 +13,9 @@ export class AppComponent implements OnInit{
   blogPost$: Observable<any> | undefined;
 
   constructor(private http: HttpClient) {
-
+    var language = navigator.language;
+    // localStorage.setItem('lang', language.slice(0,2));
+    // console.log(navigator)
   }
 
   ngOnInit() {

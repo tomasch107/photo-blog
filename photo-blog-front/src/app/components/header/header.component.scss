@@ -31,8 +31,15 @@
 .mobile-nav-toggle {
   display: none;
 }
+header {
+  padding-top: 1rem;
+}
 
 @media (max-width: 35rem) {
+  header {
+    padding-top: 0;
+  }
+
   .primary-navigation {
     --underline-gap: .5rem;
     position: fixed;
@@ -56,10 +63,10 @@
 
   .mobile-nav-toggle {
     display: block;
-    position: fixed;
+    position: absolute;
     z-index: 2000;
     right: 1rem;
-    top: 3rem;
+    top: 2rem;
     background: transparent;
     background-image: url(/assets/shared/icon-hamburger.svg);
     background-repeat: no-repeat;
@@ -71,6 +78,7 @@
 
   .mobile-nav-toggle[aria-expanded="true"] {
     background-image: url(/assets/shared/icon-close.svg);
+    position: fixed;
   }
 
   .mobile-nav-toggle:focus-visible {
@@ -171,6 +179,3 @@ button {
   cursor: pointer;
 }
 
-header {
-  padding-top: 1rem;
-}

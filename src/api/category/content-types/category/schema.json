@@ -36,13 +36,23 @@
       "target": "api::category.category",
       "inversedBy": "categories"
     },
+    "order": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "integer"
+    },
     "code": {
       "pluginOptions": {
         "i18n": {
-          "localized": true
+          "localized": false
         }
       },
-      "type": "uid"
+      "type": "string",
+      "required": true,
+      "unique": false
     }
   }
 }

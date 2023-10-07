@@ -1,3 +1,4 @@
+import {Category} from "./category.model";
 
 export interface BaseImage {
   id: string;
@@ -24,4 +25,5 @@ export interface Post {
   title:string;
   description:string;
   slug:string;
+  category: Category
 }

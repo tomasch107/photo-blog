@@ -6,10 +6,13 @@ import {urlConfig} from "../config/url.config";
   providedIn: 'root'
 })
 export class UrlService {
-  getUrl(alias: string, replacements: any) {
+  getUrl(alias: string, replacements?: any) {
 
     const urlWithPlaceholders = environment.apiUrl + urlConfig.endpoints[alias];
 
+    if (!replacements) {
+      return urlWithPlaceholders;
+    }
 
     return urlWithPlaceholders.replace(
       /{(\w+)}/g,

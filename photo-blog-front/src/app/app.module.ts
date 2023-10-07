@@ -8,11 +8,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HeaderComponent } from './components/header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {LanguageInterceptor} from "./services/language.interceptor";
+import {MatButtonModule} from "@angular/material/button";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -20,6 +22,8 @@ import {LanguageInterceptor} from "./services/language.interceptor";
     HttpClientModule,
     FontAwesomeModule,
     BrowserAnimationsModule,
+    MatButtonModule,
+    MatMenuModule,
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: LanguageInterceptor, multi: true },],
   bootstrap: [AppComponent]

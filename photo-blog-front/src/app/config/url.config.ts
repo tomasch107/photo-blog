@@ -2,9 +2,9 @@
 export const urlConfig: UrlConfig =  {
   endpoints: {
     posts: '/posts?filters[category][code][$contains]={categoryCode}&populate[images][*]',
-    post: '/posts?filters[slug][$contains]={slug}&populate[images][*]',
-    posts2: '/posts',
-    categories: '/categories?filters[category]&filters[id][$null]&[populate][2]=categories'
+    allPostsExcept: '/posts?filters[category][code][$notContains]=nature&populate[images][*]',
+    post: '/posts?filters[slug][$contains]={slug}&populate[images][*]&populate[category][*]',
+    categories: '/categories?filters[category]&sort[1]=order&filters[id][$null]&[populate][2]=categories'
   }
 }
 

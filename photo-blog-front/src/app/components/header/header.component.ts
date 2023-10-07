@@ -3,6 +3,8 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import {CategoryService} from "../../services/category.service";
 import {Category} from "../../model/category.model";
 import {Router} from "@angular/router";
+import {LanguageService} from "../../services/language.service";
+import {switchMap} from "rxjs";
 
 @Component({
   selector: 'app-header',
@@ -15,8 +17,10 @@ export class HeaderComponent {
 
   @ViewChild('navTogle', {static: false}) navToggle: ElementRef | undefined;
   @ViewChild('nav', {static: false}) nav: ElementRef | undefined;
-  categories$ = this.categoryService.getAllCategories();
-  constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router) {
+  categories$ = this.languageService.currentLanguage$.pipe(
+    switchMap(() => this.categoryService.getAllCategories())
+  )
+  constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router, private languageService: LanguageService) {
   }
 
   mobileToggle() {
@@ -38,5 +42,13 @@ export class HeaderComponent {
     } else {
       return !url || url.length <=1;
     }
+  }
+
+  openSubCategories(parentCategory: HTMLLIElement) {
+    this.renderer2.addClass(parentCategory, "open")
+  }
+
+  changeLanguage(en: string) {
+    this.languageService.changeLanguage(en);
   }
 }

@@ -3,7 +3,7 @@
 }
 
 @mixin media-sm-down() {
-  @media (max-width: 599px) { @content; }
+  @media (max-width:  35em) { @content; }
 }
 @mixin media-sm-up() {
   @media (min-width: 600px) { @content; }

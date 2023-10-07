@@ -23,4 +23,10 @@ export class CategoryService {
 
     return this.http.get<ApiPaginatedResponse<Post>>(url);
   }
+
+  getAllImages(): Observable<ApiPaginatedResponse<Post>> {
+    const url = this.urlService.getUrl('allPostsExcept');
+
+    return this.http.get<ApiPaginatedResponse<Post>>(url);
+  }
 }

@@ -5,6 +5,7 @@ import {CategoryService} from "../../services/category.service";
 import {ApiPaginatedResponse, Category} from "../../model/category.model";
 import {DOCUMENT} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
+import {RenderingService} from "../../services/rendering.service";
 
 @Component({
   selector: 'app-main-page',
@@ -13,14 +14,13 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class MainPageComponent implements OnInit{
 
-  constructor(private categoryService: CategoryService, private renderer2: Renderer2,  @Inject(DOCUMENT) private document: Document, private router: Router) {
+  constructor(private categoryService: CategoryService, private renderer2: Renderer2,  @Inject(DOCUMENT) private document: Document, private router: Router,    private renderingService: RenderingService
+  ) {
 
   }
 
   ngOnInit() {
-    this.renderer2.addClass(document.body, 'home');
-    this.renderer2.removeClass(document.body, 'category');
-    this.renderer2.removeClass(document.body, 'image');
+    this.renderingService.changeBodyBackground('home');
   }
 
 }

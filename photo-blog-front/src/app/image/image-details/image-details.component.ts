@@ -3,12 +3,14 @@ import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
-import {Observable} from "rxjs";
+import {Observable, pipe, switchMap, tap} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {ApiPaginatedResponse} from "../../model/category.model";
 import {ImageService} from "../service/image.service";
 import {MarkdownService} from "ngx-markdown";
 import {PhotoswipeComponent} from "../photoswipe/photoswipe.component";
+import {LanguageService} from "../../services/language.service";
+import {RenderingService} from "../../services/rendering.service";
 
 @Component({
   selector: 'app-image-details',
@@ -25,6 +27,8 @@ export class ImageDetailsComponent implements OnInit {
     private renderer2: Renderer2,
     @Inject(DOCUMENT) private document: Document,
     private markdownService: MarkdownService,
+    private languageService: LanguageService,
+    private renderingService: RenderingService
   ) {
   }
 
@@ -33,16 +37,19 @@ export class ImageDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      const categoryCode = params.get('imageId');
-      if (categoryCode) {
-        this.posts$ = this.imageService.getImagesForSlug(categoryCode);
+      const imageId = params.get('imageId');
+      if (imageId) {
+        this.posts$ = this.languageService.currentLanguage$.pipe(switchMap(() => this.imageService.getImagesForSlug(imageId))).pipe(
+          tap(posts => {
+            if (posts.data.some( post => ['nature', 'natura'].includes(post.category.code))) {
+              this.renderingService.changeBodyBackground('nature')
+            } else {
+              this.renderingService.changeBodyBackground('image')
+            }
+          })
+        );
       }
     })
-
-    this.renderer2.removeClass(document.body, 'category');
-    this.renderer2.removeClass(document.body, 'home');
-    this.renderer2.addClass(document.body, 'image');
-
   }
 
   openImage(images: Image[]) {

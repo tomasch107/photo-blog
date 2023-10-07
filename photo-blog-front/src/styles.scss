@@ -1,4 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$my-primary: mat.define-palette(mat.$gray-palette, 500);
+$my-accent: mat.define-palette(mat.$gray-palette, A200, A100, A400);
+
+$my-theme: mat.define-dark-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+  ),
+  density: 0,
+));
+
+// Emit theme-dependent styles for common features used across multiple components.
+@include mat.core-theme($my-theme);
+@include mat.all-component-themes($my-theme);
+
 :root {
   /* colors */
   --clr-dark: 230 35% 7%;
@@ -253,12 +273,28 @@ body {
 
 .category {
   background-image: url(/assets/images/fireworks.jpg);
-  -webkit-backdrop-filter: blur(.3rem);
-  backdrop-filter: blur(.3rem);
 }
 
 .image {
   background-image: url(/assets/images/fireworks.jpg);
-  -webkit-backdrop-filter: blur(.3rem);
-  backdrop-filter: blur(.3rem);
+}
+
+.nature {
+  background-image: url(/assets/images/nature.jpg);
+}
+
+
+.mat-mdc-menu-panel.mdc-menu-surface {
+  background: hsl( var(--clr-white) / 0.15) !important;
+  backdrop-filter: blur(1.5rem) !important;
+  padding: 0 5px !important;
+  border-radius: 0;
+
+  li.subcategory {
+    span {
+      text-transform: uppercase;
+      font-size: var(--fs-400);
+      letter-spacing: 2.35px;
+    }
+  }
 }

@@ -56,10 +56,10 @@
 
   .mobile-nav-toggle {
     display: block;
-    position: absolute;
+    position: fixed;
     z-index: 2000;
     right: 1rem;
-    top: 2rem;
+    top: 3rem;
     background: transparent;
     background-image: url(/assets/shared/icon-hamburger.svg);
     background-repeat: no-repeat;

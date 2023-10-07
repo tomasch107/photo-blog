@@ -1,8 +1,8 @@
-import {Component, Inject, OnInit, Renderer2} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ApiPaginatedResponse, Category} from "../../model/category.model";
 import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {Observable, switchMap} from "rxjs";
+import {Observable, Subscription, switchMap, tap} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
@@ -14,7 +14,7 @@ import {RenderingService} from "../../services/rendering.service";
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent implements OnInit {
+export class CategoryComponent implements OnInit, OnDestroy {
   posts$: Observable<ApiPaginatedResponse<Post>> | undefined;
 
   constructor(
@@ -28,24 +28,29 @@ export class CategoryComponent implements OnInit {
   }
 
   baseUrl = environment.baseUrl;
+  subscriptions = new Subscription();
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       const categoryCode = params.get('categoryCode');
       if (categoryCode) {
+        this.subscriptions.add(
+          this.categoryService.getCategoryForCode(categoryCode).subscribe((categories) => {
+            const category = categories.data[0];
+            this.renderingService.changeBodyBackgroundImage(category?.background);
+          })
+        )
         this.posts$ = this.languageService.currentLanguage$.pipe(switchMap(() => {
           if (categoryCode.includes('all')) {
             return this.categoryService.getAllImages();
-
           }
           return this.categoryService.getImagesForCategory(categoryCode);
-        }))
+        })
 
-        if (['nature', 'natura'].includes(categoryCode)) {
-          this.renderingService.changeBodyBackground('nature')
-        } else {
-          this.renderingService.changeBodyBackground('category');
-        }
+        )
       }
     })
   }

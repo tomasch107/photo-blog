@@ -27,3 +27,10 @@ export interface Post {
   slug:string;
   category: Category
 }
+
+export interface Page {
+  background: Image;
+  title: string;
+  code: string;
+  pageData: any;
+}

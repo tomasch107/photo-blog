@@ -1,9 +1,9 @@
-import {Component, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
-import {Observable, pipe, switchMap, tap} from "rxjs";
+import {Observable, pipe, Subscription, switchMap, tap} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {ApiPaginatedResponse} from "../../model/category.model";
 import {ImageService} from "../service/image.service";
@@ -41,11 +41,8 @@ export class ImageDetailsComponent implements OnInit {
       if (imageId) {
         this.posts$ = this.languageService.currentLanguage$.pipe(switchMap(() => this.imageService.getImagesForSlug(imageId))).pipe(
           tap(posts => {
-            if (posts.data.some( post => ['nature', 'natura'].includes(post.category.code))) {
-              this.renderingService.changeBodyBackground('nature')
-            } else {
-              this.renderingService.changeBodyBackground('image')
-            }
+            const category = posts.data[0]?.category;
+            this.renderingService.changeBodyBackgroundImage(category?.background);
           })
         );
       }

@@ -1,9 +1,12 @@
+import {Image} from "./image.model";
+
 export interface Category {
   id: number;
   name: string;
   code: string;
   categories: Category[];
   category: ApiResponse<Category>
+  background: Image;
 
 }
 

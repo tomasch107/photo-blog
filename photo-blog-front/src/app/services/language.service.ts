@@ -8,7 +8,7 @@ export class LanguageService {
 
   static readonly languageStorageKey = 'lang';
 
-  currentLanguage$ = new BehaviorSubject(localStorage.getItem(LanguageService.languageStorageKey) ?? 'en')
+  currentLanguage$ = new BehaviorSubject(localStorage.getItem(LanguageService.languageStorageKey) ?? window.navigator.language.slice(0,2) ?? 'en');
   constructor() { }
 
   public changeLanguage(languageIsoCode: string) {

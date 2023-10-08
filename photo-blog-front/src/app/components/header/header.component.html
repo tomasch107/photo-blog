@@ -8,8 +8,8 @@
   <nav>
     <ul #nav id="primary-navigation" data-visible="false" class="primary-navigation underline-indicators flex">
       <div class="language-selector">
-        <img src="assets/svg/en.svg" (click)="changeLanguage('en')"/>
-        <img src="assets/svg/pl.svg" (click)="changeLanguage('pl')"/>
+        <span [class.active]="isLanguageActive('en')" (click)="changeLanguage('en')">EN</span>
+        <span [class.active]="isLanguageActive('pl')" (click)="changeLanguage('pl')">PL</span>
       </div>
       <ng-container class="categories" *ngIf="categories$ | async as categories">
         <ng-container *ngFor="let category of categories.data">

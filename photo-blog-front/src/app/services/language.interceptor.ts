@@ -6,15 +6,16 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {LanguageService} from "./language.service";
 
 @Injectable()
 export class LanguageInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(private languageService: LanguageService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-    const language = localStorage.getItem('lang') || 'en'
+    const language = this.languageService.currentLanguage$.value || 'en'
 
     request = request.clone({
       setParams: {

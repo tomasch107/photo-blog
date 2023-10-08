@@ -1,9 +1,12 @@
-import {Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 
 // Import PhotoSwipe
 import PhotoSwipe, {DataSource} from 'photoswipe';
 import {Image} from "../../model/image.model";
 import {environment} from "../../../environments/environment";
+import {ActivatedRoute} from "@angular/router";
+import {Subscription} from "rxjs";
+import {ImageService} from "../service/image.service";
 
 @Component({
   selector: 'app-photoswipe',
@@ -16,7 +19,8 @@ export class PhotoswipeComponent {
   @Input() images: Image[] = [];
 
   // ========================================================================
-  constructor() { }
+  constructor(private imageService: ImageService) { }
+
 
   // ========================================================================
   openGallery(images?: Image[], index = 0)
@@ -33,15 +37,6 @@ export class PhotoswipeComponent {
       }
     })
 
-    // Initializes and opens PhotoSwipe
-    const gallery = new PhotoSwipe({
-      gallery: this.photoSwipe?.nativeElement,
-      children: 'a',
-      pswpModule: () => import('photoswipe'),
-      dataSource: newimages,
-      index: index,
-      wheelToZoom: true
-    });
-    gallery.init();
+    this.imageService.openGallery(this.photoSwipe?.nativeElement, newimages, index);
   }
 }

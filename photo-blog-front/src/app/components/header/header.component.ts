@@ -64,6 +64,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  isLanguageActive(languageIsoCode?: string): boolean {
+    return this.languageService.currentLanguage$.value === languageIsoCode;
+  }
+
+
   openSubCategories(parentCategory: HTMLLIElement) {
     this.renderer2.addClass(parentCategory, "open")
   }

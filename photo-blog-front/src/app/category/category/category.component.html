@@ -1,9 +1,15 @@
-<ng-container *ngIf="posts$ | async as posts">
-  <ul>
-    <li  *ngFor="let post of posts.data" [routerLink]="['/images', post.slug]">
+<ng-container *ngIf="posts">
+  <ul infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      (scrolled)="onScroll()">
+    <li  *ngFor="let post of posts" [routerLink]="['/images', post.slug]">
       <img *ngIf="!post.thumbnail" src="{{baseUrl}}{{post.images[0].formats['medium'].url}}">
       <img *ngIf="post.thumbnail" src="{{baseUrl}}{{post.thumbnail.formats['medium'].url}}">
       <span class="ff-sans-cond  fs-400 "> {{post.title}} </span>
     </li>
   </ul>
+  <div class="load-more">
+    <span *ngIf="!endOfList" (click)="loadMore()">{{ languageCode === 'en' ? 'Load more' : 'Załaduj więcej' }}</span>
+  </div>
 </ng-container>

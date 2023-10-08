@@ -18,8 +18,8 @@ export class CategoryService {
     return this.http.get<ApiPaginatedResponse<Category>>(url);
   }
 
-  getImagesForCategory(categoryCode: string): Observable<ApiPaginatedResponse<Post>> {
-    const url = this.urlService.getUrl('posts', {categoryCode});
+  getImagesForCategory(categoryCode: string, page = 1, pageSize = 25): Observable<ApiPaginatedResponse<Post>> {
+    const url = this.urlService.getUrl('posts', {categoryCode, page, pageSize});
 
     return this.http.get<ApiPaginatedResponse<Post>>(url);
   }
@@ -30,8 +30,8 @@ export class CategoryService {
   return this.http.get<ApiPaginatedResponse<Category>>(url);
 }
 
-  getAllImages(): Observable<ApiPaginatedResponse<Post>> {
-    const url = this.urlService.getUrl('allPostsExcept');
+  getAllImages(page = 1, pageSize = 25): Observable<ApiPaginatedResponse<Post>> {
+    const url = this.urlService.getUrl('allPostsExcept', {page, pageSize});
 
     return this.http.get<ApiPaginatedResponse<Post>>(url);
   }

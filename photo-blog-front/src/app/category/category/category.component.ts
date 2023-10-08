@@ -35,7 +35,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   baseUrl = environment.baseUrl;
   subscriptions = new Subscription();
   categoryCode: string | null = '';
-  endOfList = false;
+  endOfList = true;
 
 
   ngOnDestroy() {

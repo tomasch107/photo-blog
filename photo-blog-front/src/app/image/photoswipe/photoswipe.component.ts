@@ -19,7 +19,7 @@ export class PhotoswipeComponent {
   constructor() { }
 
   // ========================================================================
-  openGallery(images?: Image[])
+  openGallery(images?: Image[], index = 0)
   {
     // Build gallery images array
     images = images || this.images;
@@ -33,19 +33,14 @@ export class PhotoswipeComponent {
       }
     })
 
-    // define options (if needed)
-    const options = {
-      // optionName: 'option value'
-      // for example:
-      index: 0 // start at first slide
-    };
-
     // Initializes and opens PhotoSwipe
     const gallery = new PhotoSwipe({
       gallery: this.photoSwipe?.nativeElement,
       children: 'a',
       pswpModule: () => import('photoswipe'),
       dataSource: newimages,
+      index: index,
+      wheelToZoom: true
     });
     gallery.init();
   }

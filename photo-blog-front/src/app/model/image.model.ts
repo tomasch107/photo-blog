@@ -26,6 +26,7 @@ export interface Post {
   description:string;
   slug:string;
   category: Category
+  thumbnail: Image
 }
 
 export interface Page {

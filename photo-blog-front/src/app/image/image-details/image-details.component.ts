@@ -49,8 +49,8 @@ export class ImageDetailsComponent implements OnInit {
     })
   }
 
-  openImage(images: Image[]) {
-    this.photoSwipe?.openGallery(images);
+  openImage(images: Image[], index = 0) {
+    this.photoSwipe?.openGallery(images, index);
 
   }
 }

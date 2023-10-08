@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: 'http://localhost:1337/api',
-  baseUrl: 'http://localhost:1337'
+  apiUrl: 'https://photoblogapi.bieda.it/api',
+  baseUrl: 'https://photoblogapi.bieda.it'
 };

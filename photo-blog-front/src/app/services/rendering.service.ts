@@ -18,21 +18,6 @@ export class RenderingService {
     this.renderer2 = rendererFactory.createRenderer(document, null);
 
   }
-
-  private readonly backgroundClasses = ['home', 'image', 'nature', 'category']
-
-  changeBodyBackground(newClass: string) {
-    this.renderer2.removeClass(document.body, 'home');
-    this.renderer2.removeClass(document.body, 'image');
-    this.renderer2.removeClass(document.body, 'nature');
-
-    this.backgroundClasses.forEach(bodyClass => {
-      this.renderer2.removeClass(document.body, bodyClass);
-    })
-
-    this.renderer2.addClass(document.body, newClass);
-  }
-
   changeBodyBackgroundImage(image: Image) {
     const baseUrl = environment.baseUrl;
 

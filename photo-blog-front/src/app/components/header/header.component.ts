@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {faBars} from '@fortawesome/free-solid-svg-icons';
 import {CategoryService} from "../../services/category.service";
 import {Category} from "../../model/category.model";
@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {LanguageService} from "../../services/language.service";
 import {Subscription, switchMap} from "rxjs";
 import {RenderingService} from "../../services/rendering.service";
+import {DOCUMENT} from "@angular/common";
 
 @Component({
   selector: 'app-header',
@@ -23,7 +24,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switchMap(() => this.categoryService.getAllCategories())
   )
 
-  constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router, private languageService: LanguageService, private renderingService: RenderingService) {
+  constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router, private languageService: LanguageService, private renderingService: RenderingService,     @Inject(DOCUMENT) private document: Document,
+  ) {
   }
 
   mobileToggle() {
@@ -36,6 +38,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   toggleMobileNavbar(open: boolean) {
+    if (open) {
+      this.renderer2.addClass(this.document.body, 'navbar-opened')
+    } else {
+      this.renderer2.removeClass(this.document.body, 'navbar-opened')
+    }
+
     this.renderer2.setAttribute(this.nav?.nativeElement, "data-visible", String(open))
     this.renderer2.setAttribute(this.navToggle?.nativeElement, "aria-expanded", String(open))
   }

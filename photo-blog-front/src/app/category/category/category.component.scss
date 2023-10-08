@@ -4,13 +4,10 @@ ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   padding: 1em;
+  margin: 0;
   gap: 1em;
   @include media-xs-down() {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-
-  @include media-sm-down() {
-    padding-top: 3em;
   }
 }
 

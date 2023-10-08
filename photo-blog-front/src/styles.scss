@@ -114,6 +114,16 @@ body {
   grid-template-rows: min-content 1fr;
 
   overflow-x: hidden;
+
+  &.navbar-opened {
+    &:after {
+      content: '';
+      position: absolute;
+      background-color: transparent;
+      height: 100%;
+      width: 100%;
+    }
+  }
 }
 
 /* make images easier to work with */

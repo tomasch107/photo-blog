@@ -36,6 +36,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   categoryCode: string | null = '';
   categoryName = '';
+  totalCount = 0;
   loading = true;
   endOfList = true;
   skeletonItems = [1, 2, 3, 4, 5, 6];
@@ -119,6 +120,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
             })
           )
           this.posts = [];
+          this.totalCount = 0;
           this.currentPage = 1;
           this.endOfList = false;
           this.loadPosts(this.categoryCode);
@@ -141,10 +143,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
         next: data => {
           this.currentPage++;
           this.posts?.push(...data.data)
-          this.endOfList = this.posts.length >= data.meta.pagination.total;
+          this.totalCount = data.meta.pagination.total;
+          this.endOfList = this.posts.length >= this.totalCount;
           this.loading = false;
         },
         error: () => {
+          this.totalCount = 0;
           this.endOfList = true;
           this.loading = false;
         }

@@ -4,8 +4,8 @@
 
     <div class="gallery-heading">
       <h1 class="display-title" *ngIf="categoryName">{{ categoryName }}</h1>
-      <span class="pill gallery-count" *ngIf="posts.length">
-        {{ posts.length }} {{ getFramesLabel(posts.length) }}
+      <span class="pill gallery-count" *ngIf="totalCount">
+        {{ totalCount }} {{ getFramesLabel(totalCount) }}
       </span>
     </div>
   </header>

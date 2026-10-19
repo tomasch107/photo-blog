@@ -3,7 +3,7 @@ import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
-import {Observable, pipe, Subscription, switchMap, tap} from "rxjs";
+import {Observable, switchMap} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {ApiPaginatedResponse} from "../../model/category.model";
 import {ImageService} from "../service/image.service";
@@ -98,6 +98,17 @@ export class ImageDetailsComponent implements OnInit {
     return url ? `${environment.baseUrl}${url}` : '';
   }
 
+  getAspectRatio(image: Image): string {
+    const width = Number(image?.width);
+    const height = Number(image?.height);
+
+    return width > 0 && height > 0 ? `${width} / ${height}` : '4 / 3';
+  }
+
+  formatIndex(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       const imageId = params.get('imageId');
@@ -105,12 +116,7 @@ export class ImageDetailsComponent implements OnInit {
         this.posts$ = this.languageService.currentLanguage$.pipe(switchMap(() => {
           this.languageCode = this.languageService.currentLanguage$.value;
           return this.imageService.getImagesForSlug(imageId);
-        })).pipe(
-          tap(posts => {
-            const category = posts.data[0]?.category;
-            this.renderingService.changeBodyBackgroundImage(category?.background);
-          })
-        );
+        }));
       }
     })
   }

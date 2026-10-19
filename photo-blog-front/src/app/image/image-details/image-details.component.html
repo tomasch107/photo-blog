@@ -1,35 +1,36 @@
-<section class="detail-page" *ngIf="posts$ | async as posts; else detailLoading">
+<main class="detail-page" id="main" tabindex="-1" *ngIf="posts$ | async as posts; else detailLoading">
     <ng-container *ngIf="posts.data[0] as post">
-        <a class="detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
-            <span aria-hidden="true">←</span> {{ backLabel }}
+        <a class="text-link detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+            {{ backLabel }}
         </a>
 
         <header class="detail-header">
-            <p class="eyebrow">{{ post.category ? post.category.name : 'Deep sky' }}</p>
+            <h1 class="display-title detail-title">{{ post.title }}</h1>
 
-            <div class="detail-title-row">
-                <h1 class="display-title">{{ post.title }}</h1>
-
-                <div class="detail-meta">
-                    <span *ngIf="post.date">
-            <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
-          </span>
-                    <span>{{ post.images.length }} {{ getFramesLabel(post.images.length) }}</span>
-                </div>
-            </div>
+            <p class="detail-meta data-label">
+                <span *ngIf="post.date">
+                    <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
+                </span>
+                <span>{{ post.images.length }} {{ getFramesLabel(post.images.length) }}</span>
+                <span *ngIf="post.category">{{ post.category.name }}</span>
+            </p>
         </header>
 
-        <figure class="detail-hero">
-            <button type="button" class="detail-hero__button" (click)="openImage(post.images)" [attr.aria-label]="zoomHint">
-        <img
-          *ngIf="post.images[0]"
-          [src]="getImageUrl(post.images[0])"
-          [alt]="post.title">
-        <span class="detail-hero__hint">
-          {{ zoomHint }}
-          <span aria-hidden="true">↗</span>
-        </span>
-      </button>
+        <figure class="plate detail-plate">
+            <button type="button" class="plate__frame detail-plate__frame" (click)="openImage(post.images)" [attr.aria-label]="zoomHint">
+                <img
+                  *ngIf="post.images[0]"
+                  [src]="getImageUrl(post.images[0])"
+                  [alt]="post.title">
+            </button>
+            <figcaption class="plate__caption">
+                <span class="plate__meta">{{ formatIndex(1) }} / {{ formatIndex(post.images.length) }}</span>
+                <span class="plate__action">
+                    {{ zoomHint }}
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
+                </span>
+            </figcaption>
         </figure>
 
         <div class="detail-body">
@@ -42,49 +43,57 @@
             </article>
 
             <aside class="detail-aside">
-                <div class="detail-fact">
-                    <span>{{ objectLabel }}</span>
-                    <strong>{{ post.title }}</strong>
-                </div>
-                <div class="detail-fact" *ngIf="post.date">
-                    <span>{{ capturedLabel }}</span>
-                    <strong>{{ post.date | date:'yyyy.MM.dd' }}</strong>
-                </div>
-                <div class="detail-fact" *ngIf="post.category">
-                    <span>{{ collectionLabel }}</span>
-                    <strong>{{ post.category.name }}</strong>
-                </div>
+                <dl class="detail-facts">
+                    <div class="detail-fact">
+                        <dt class="data-label">{{ objectLabel }}</dt>
+                        <dd class="detail-fact__value">{{ post.title }}</dd>
+                    </div>
+                    <div class="detail-fact" *ngIf="post.date">
+                        <dt class="data-label">{{ capturedLabel }}</dt>
+                        <dd class="detail-fact__value">{{ post.date | date:'yyyy.MM.dd' }}</dd>
+                    </div>
+                    <div class="detail-fact" *ngIf="post.category">
+                        <dt class="data-label">{{ collectionLabel }}</dt>
+                        <dd class="detail-fact__value">{{ post.category.name }}</dd>
+                    </div>
+                </dl>
             </aside>
         </div>
 
         <section class="detail-gallery" *ngIf="post.images.length > 1">
-            <div class="detail-gallery__header">
-                <p class="eyebrow">{{ moreFramesLabel }}</p>
-                <span>{{ post.images.length - 1 }}</span>
-            </div>
+            <header class="detail-gallery__header">
+                <h2 class="detail-gallery__title">{{ moreFramesLabel }}</h2>
+                <span class="data-label">{{ post.images.length - 1 }}</span>
+            </header>
 
             <ul class="detail-thumbs">
                 <li *ngFor="let image of post.images | slice:1; index as i">
-                    <button type="button" (click)="openImage(post.images, i + 1)" [attr.aria-label]="'Open image ' + (i + 2)">
-            <img
-              [src]="getImageUrl(image, 'medium')"
-              [alt]="post.title + ' — ' + (i + 2)"
-              loading="lazy">
-          </button>
+                    <button
+                      type="button"
+                      class="plate detail-thumb"
+                      (click)="openImage(post.images, i + 1)"
+                      [attr.aria-label]="'Open frame ' + formatIndex(i + 2) + ' / ' + formatIndex(post.images.length)">
+                        <span class="plate__frame" [style.aspectRatio]="getAspectRatio(image)">
+                            <img [src]="getImageUrl(image, 'medium')" [alt]="post.title + ' — ' + (i + 2)" loading="lazy">
+                        </span>
+                        <span class="plate__caption">
+                            <span class="plate__meta">{{ formatIndex(i + 2) }} / {{ formatIndex(post.images.length) }}</span>
+                        </span>
+                    </button>
                 </li>
             </ul>
         </section>
 
         <app-photoswipe #photoSwipe></app-photoswipe>
     </ng-container>
-</section>
+</main>
 
 <ng-template #detailLoading>
-    <section class="detail-page detail-page--loading" aria-hidden="true">
+    <main class="detail-page detail-page--loading" aria-hidden="true">
         <div class="skeleton skeleton--back"></div>
-        <div class="skeleton skeleton--eyebrow"></div>
         <div class="skeleton skeleton--title"></div>
+        <div class="skeleton skeleton--meta"></div>
         <div class="skeleton skeleton--hero"></div>
         <div class="skeleton skeleton--copy"></div>
-    </section>
+    </main>
 </ng-template>

@@ -2,6 +2,7 @@ import {Category} from "./category.model";
 
 export interface BaseImage {
   id: string;
+  name?: string;
   url:string;
   width:string;
   height:string;

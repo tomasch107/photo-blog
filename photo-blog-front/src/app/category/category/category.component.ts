@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2} from
 import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {combineLatest, Subscription, switchMap, take} from "rxjs";
-import {Post} from "../../model/image.model";
+import {Post, Image} from "../../model/image.model";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
 import {LanguageService} from "../../services/language.service";
@@ -42,8 +42,16 @@ export class CategoryComponent implements OnInit, OnDestroy {
   skeletonItems = [1, 2, 3, 4, 5, 6];
   private loadToken = 0;
 
-  get collectionLabel(): string {
-    return this.languageCode === 'pl' ? 'Kolekcja' : 'Collection';
+  // Posts are sorted by date (newest first), so the head of the list is the
+  // most recent capture and becomes the cover at the top of the category.
+  get coverPost(): Post | undefined {
+    return this.posts[0];
+  }
+
+  // The cover already shows the newest capture; keep it out of the grid so the
+  // same frame is not listed twice.
+  get gridPosts(): Post[] {
+    return this.posts.slice(1);
   }
 
   getFramesLabel(count: number): string {
@@ -65,10 +73,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
     return 'kadrów';
   }
 
-  get viewFrameLabel(): string {
-    return this.languageCode === 'pl' ? 'Zobacz kadr' : 'View frame';
-  }
-
   get allCapturesLabel(): string {
     return this.languageCode === 'pl' ? 'Wszystkie kadry' : 'All captures';
   }
@@ -88,10 +92,21 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   getPostImage(post: Post): string {
-    const image = post.thumbnail || post.images?.[0];
+    const image = this.firstImage(post);
     const url = image?.formats?.['medium']?.url || image?.url || '';
 
     return url ? `${this.baseUrl}${url}` : '';
+  }
+
+  getCoverImage(post: Post): string {
+    const image = this.firstImage(post);
+    const url = image?.formats?.['large']?.url || image?.url || '';
+
+    return url ? `${this.baseUrl}${url}` : '';
+  }
+
+  private firstImage(post: Post): Image | undefined {
+    return post.thumbnail || post.images?.[0];
   }
 
 
@@ -117,7 +132,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
               const category = categories.data[0];
               this.categoryName = category?.name
                 ?? (categoryCode.includes('all') ? this.allCapturesLabel : '');
-              this.renderingService.changeBodyBackgroundImage(category?.background);
             })
           )
           this.posts = [];

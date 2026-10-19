@@ -22,62 +22,68 @@ $my-theme: mat.define-dark-theme((
 
 /* ==========================================================================
    Design tokens
+
+   One world: an observing archive. Flat ink ground, paper-white ink, hairline
+   rules, a single ember accent used only for interaction and measurement.
+   Instrument Serif carries voice; IBM Plex Mono carries data and controls.
    ========================================================================== */
 
 :root {
   color-scheme: dark;
 
   /* surfaces */
-  --clr-bg: #05070d;
-  --clr-bg-soft: #080c16;
-  --clr-surface: #0b111d;
-  --clr-surface-raised: #101827;
-  --clr-dark: 230 35% 7%;
-  --clr-gray: 220 15% 55%;
-  --clr-light: 210 40% 96%;
-  --clr-white: 40 30% 96%;
+  --clr-bg: #0c0c0d;
+  --clr-bg-soft: #111112;
+  --clr-surface: #141416;
+  --clr-surface-raised: #191a1c;
+  --clr-dark: 240 8% 5%;
+  --clr-gray: 40 6% 60%;
+  --clr-light: 40 33% 92%;
+  --clr-white: 40 33% 92%;
 
   /* text */
-  --clr-text: #f4f1e9;
-  --clr-muted: #9aa6b9;
-  --clr-muted-strong: #c1cad8;
+  --clr-text: #f2ede4;
+  --clr-muted: #9b968c;
+  --clr-muted-strong: #cfc9be;
 
   /* accents */
-  --clr-accent: #9bd8ff;
-  --clr-accent-strong: #64c8ff;
-  --clr-accent-warm: #efb37d;
-  --clr-accent-soft: rgba(155, 216, 255, 0.14);
-  --clr-line: rgba(255, 255, 255, 0.12);
-  --clr-line-strong: rgba(255, 255, 255, 0.22);
+  --clr-accent: #e2603f;
+  --clr-accent-strong: #ff7a5c;
+  --clr-accent-warm: #d9c9a3;
+  --clr-accent-soft: rgba(226, 96, 63, 0.14);
+  --clr-line: rgba(242, 237, 228, 0.14);
+  --clr-line-strong: rgba(242, 237, 228, 0.28);
 
   /* typography */
   --ff-display: "Instrument Serif", Georgia, "Times New Roman", serif;
   --ff-serif: var(--ff-display);
-  --ff-sans: "Space Grotesk", "Segoe UI", Helvetica, Arial, sans-serif;
-  --ff-sans-cond: var(--ff-sans);
-  --ff-sans-normal: var(--ff-sans);
+  --ff-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --ff-sans: var(--ff-mono);
+  --ff-sans-cond: var(--ff-mono);
+  --ff-sans-normal: var(--ff-mono);
 
-  --fs-900: clamp(3.4rem, 12vw, 9.5rem);
-  --fs-800: clamp(2.8rem, 7vw, 6.5rem);
-  --fs-700: clamp(2rem, 4vw, 3.5rem);
-  --fs-600: clamp(1.35rem, 2vw, 1.8rem);
-  --fs-500: 1.125rem;
+  --fs-900: clamp(2.9rem, 7.4vw, 6rem);
+  --fs-800: clamp(2.4rem, 5.6vw, 4.5rem);
+  --fs-700: clamp(1.9rem, 3.6vw, 3rem);
+  --fs-600: clamp(1.4rem, 2.2vw, 1.9rem);
+  --fs-500: 1.0625rem;
   --fs-400: 1rem;
   --fs-300: 0.875rem;
-  --fs-200: 0.75rem;
+  --fs-200: 0.6875rem;
 
   /* geometry */
-  --radius-sm: 0.75rem;
-  --radius-md: 1.25rem;
-  --radius-lg: 1.75rem;
-  --radius-pill: 999px;
-  --header-height: 5.5rem;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-pill: 2px;
+  --header-height: 4.75rem;
   --page-gutter: clamp(1.1rem, 4vw, 3.5rem);
-  --content-max: 92rem;
-  --shadow-soft: 0 1.5rem 4rem rgba(0, 0, 0, 0.32);
-  --shadow-glow: 0 0 0 1px rgba(155, 216, 255, 0.08), 0 1.5rem 4rem rgba(0, 0, 0, 0.4);
+  --content-max: 88rem;
+  --shadow-soft: 0 18px 48px -28px rgba(0, 0, 0, 0.95);
+  --shadow-glow: 0 26px 60px -32px rgba(0, 0, 0, 1);
 
-  /* page-specific background set by RenderingService */
+  /* page background photo supplied by RenderingService; the archive itself
+     keeps a flat ground and mounts photography as framed plates instead. */
   --page-background-image: none;
 }
 
@@ -153,23 +159,15 @@ a {
 
 body {
   min-height: 100vh;
-  font-family: var(--ff-sans);
-  font-size: var(--fs-400);
+  font-family: var(--ff-display);
+  font-size: var(--fs-500);
   line-height: 1.6;
   color: var(--clr-text);
   background-color: var(--clr-bg);
-  background-image:
-    radial-gradient(circle at 12% -8%, rgba(100, 200, 255, 0.17), transparent 34rem),
-    radial-gradient(circle at 88% 12%, rgba(239, 179, 125, 0.11), transparent 30rem),
-    linear-gradient(180deg, rgba(5, 7, 13, 0.5) 0%, rgba(5, 7, 13, 0.76) 48%, rgba(5, 7, 13, 0.94) 100%),
-    var(--page-background-image);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
 }
 
 body.navbar-opened {
@@ -196,6 +194,10 @@ app-image-details {
   flex: 1;
 }
 
+/* ==========================================================================
+   Browser surfaces
+   ========================================================================== */
+
 ::selection {
   color: var(--clr-bg);
   background: var(--clr-accent);
@@ -203,7 +205,30 @@ app-image-details {
 
 :focus-visible {
   outline: 2px solid var(--clr-accent);
-  outline-offset: 4px;
+  outline-offset: 3px;
+}
+
+* {
+  scrollbar-color: rgba(242, 237, 228, 0.22) var(--clr-bg);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--clr-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(242, 237, 228, 0.18);
+  border: 3px solid var(--clr-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(242, 237, 228, 0.32);
 }
 
 /* ==========================================================================
@@ -211,8 +236,7 @@ app-image-details {
    ========================================================================== */
 
 .ff-serif { font-family: var(--ff-display); }
-.ff-sans-cond { font-family: var(--ff-sans); }
-.ff-sans-normal { font-family: var(--ff-sans); }
+.ff-mono { font-family: var(--ff-mono); }
 
 .fs-900 { font-size: var(--fs-900); }
 .fs-800 { font-size: var(--fs-800); }
@@ -225,56 +249,34 @@ app-image-details {
 
 .fs-900,
 .fs-800,
-.fs-700,
-.fs-600 {
-  line-height: 1.05;
+.fs-700 {
+  line-height: 0.98;
 }
 
-.uppercase { text-transform: uppercase; }
-.letter-spacing-1 { letter-spacing: 0.34em; }
-.letter-spacing-2 { letter-spacing: 0.2em; }
-.letter-spacing-3 { letter-spacing: 0.12em; }
-
+/* Display voice: serif, tight, capped well below poster scale so the
+   photographs keep the loudest voice on every page. */
 .display-title {
   font-family: var(--ff-display);
   font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.025em;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 0;
+/* Data voice: mono, sentence case, no decorative tracking. */
+.data-label {
+  font-family: var(--ff-mono);
   font-size: var(--fs-200);
   font-weight: 500;
-  letter-spacing: 0.26em;
-  line-height: 1.4;
-  text-transform: uppercase;
-  color: var(--clr-accent);
+  line-height: 1.5;
+  color: var(--clr-muted);
 }
 
-.eyebrow::before {
-  content: "";
-  width: 2.5rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.7;
-}
-
-.numbered-title {
-  font-family: var(--ff-sans);
-  font-size: var(--fs-500);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-
-.numbered-title span {
-  margin-right: 0.5em;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.25);
+.data-value {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-300);
+  font-weight: 500;
+  color: var(--clr-text);
 }
 
 /* ==========================================================================
@@ -320,18 +322,23 @@ app-image-details {
 
 .skip-to-content {
   position: absolute;
+  top: 0.75rem;
+  left: 50%;
   z-index: 9999;
-  padding: 0.65em 1.1em;
+  padding: 0.7em 1.1em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-200);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
   color: var(--clr-bg);
-  background: var(--clr-accent);
-  border-radius: var(--radius-pill);
-  margin-inline: auto;
-  transform: translateY(-120%);
-  transition: transform 200ms ease-in;
+  background: var(--clr-text);
+  transform: translate(-50%, -160%);
+  transition: transform 200ms ease-out;
 }
 
 .skip-to-content:focus {
-  transform: translateY(0.75rem);
+  transform: translate(-50%, 0);
 }
 
 /* ==========================================================================
@@ -354,87 +361,237 @@ app-image-details {
 .button {
   display: inline-flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.7rem;
   width: fit-content;
-  padding: 0.9rem 0.95rem 0.9rem 1.4rem;
-  font-family: var(--ff-sans);
+  padding: 0.75rem 1.1rem;
+  font-family: var(--ff-mono);
   font-size: var(--fs-200);
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
-  color: var(--clr-bg);
-  background: var(--clr-accent);
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  color: var(--clr-text);
+  background: transparent;
+  border: 1px solid var(--clr-line-strong);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition:
-    background-color 220ms ease,
-    color 220ms ease,
-    border-color 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
+    color 200ms ease-out,
+    background-color 200ms ease-out,
+    border-color 200ms ease-out;
 }
 
-.button:hover {
+.button:hover,
+.button:focus-visible {
+  color: var(--clr-bg);
   background: var(--clr-text);
-  transform: translateY(-2px);
-  box-shadow: 0 0.75rem 2rem rgba(155, 216, 255, 0.2);
+  border-color: var(--clr-text);
 }
 
 .button__icon {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1rem;
-  color: var(--clr-text);
-  background: rgba(5, 7, 13, 0.16);
-  border-radius: 50%;
-  transition: transform 220ms ease, background-color 220ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.85rem;
+  height: 0.85rem;
+  transition: transform 200ms ease-out;
 }
 
-.button:hover .button__icon {
-  transform: rotate(45deg);
-  background: rgba(5, 7, 13, 0.28);
+.button__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
 }
 
-.button--ghost {
-  color: var(--clr-text);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--clr-line-strong);
-  backdrop-filter: blur(1rem);
+.button:hover .button__icon,
+.button:focus-visible .button__icon {
+  transform: translateX(0.2rem);
 }
 
-.button--ghost:hover {
-  color: var(--clr-text);
-  background: rgba(255, 255, 255, 0.12);
+.button--solid {
+  color: var(--clr-bg);
+  background: var(--clr-accent);
   border-color: var(--clr-accent);
 }
 
-.pill {
+.button--solid:hover,
+.button--solid:focus-visible {
+  background: var(--clr-accent-strong);
+  border-color: var(--clr-accent-strong);
+}
+
+.button--ghost {
+  color: var(--clr-muted-strong);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.button:disabled:hover {
+  color: var(--clr-muted-strong);
+  background: transparent;
+  border-color: var(--clr-line-strong);
+}
+
+/* Text link with a rule that grows on hover: the archive's only flourish. */
+.text-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.45rem 0.8rem;
+  padding-bottom: 0.25rem;
+  font-family: var(--ff-mono);
   font-size: var(--fs-200);
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--clr-muted-strong);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--clr-line);
-  border-radius: var(--radius-pill);
+  text-decoration: none;
+  color: var(--clr-text);
 }
+
+.text-link::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 240ms ease-out, background-color 200ms ease-out;
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+  color: var(--clr-accent);
+}
+
+.text-link:hover::after,
+.text-link:focus-visible::after {
+  transform: scaleX(0.35);
+}
+
+.text-link svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+}
+
+.rule {
+  height: 1px;
+  background: var(--clr-line);
+}
+
+/* A plate: photograph mounted on a hairline, captioned underneath on the flat
+   ground. Used by every surface so the archive reads as one collection. */
+.plate {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+  color: var(--clr-text);
+  text-decoration: none;
+}
+
+.plate__frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-line);
+  transition: border-color 240ms ease-out;
+}
+
+.plate__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), filter 400ms ease-out;
+}
+
+.plate:hover .plate__frame,
+.plate:focus-visible .plate__frame {
+  border-color: var(--clr-line-strong);
+}
+
+.plate:hover .plate__frame img,
+.plate:focus-visible .plate__frame img {
+  transform: scale(1.02);
+}
+
+.plate__caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--clr-line);
+}
+
+.plate__title {
+  font-family: var(--ff-display);
+  font-size: 1.35rem;
+  line-height: 1.15;
+  transition: color 200ms ease-out;
+}
+
+.plate:hover .plate__title,
+.plate:focus-visible .plate__title {
+  color: var(--clr-accent);
+}
+
+.plate__meta {
+  flex: 0 0 auto;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-200);
+  color: var(--clr-muted);
+}
+
+.plate__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-200);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clr-muted);
+  transition: color 200ms ease-out;
+}
+
+.plate:hover .plate__action,
+.plate:focus-visible .plate__action {
+  color: var(--clr-accent);
+}
+
+.plate__action svg {
+  width: 0.7rem;
+  height: 0.7rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+}
+
 
 /* ==========================================================================
    Markdown / article copy
    ========================================================================== */
 
 .prose {
+  display: block;
   color: var(--clr-muted-strong);
-  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
-  line-height: 1.85;
+  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  line-height: 1.75;
+  max-width: 68ch;
 }
 
 .prose > * + * {
@@ -447,7 +604,7 @@ app-image-details {
   margin-top: 1.8em;
   font-family: var(--ff-display);
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.08;
   color: var(--clr-text);
 }
 
@@ -459,29 +616,41 @@ app-image-details {
   text-underline-offset: 0.2em;
 }
 
+/* Emphasis reads as a logged value, not as synthesized bold. */
 .prose strong {
+  font-family: var(--ff-mono);
+  font-size: 0.86em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--clr-text);
-  font-weight: 600;
 }
 
 .prose blockquote {
-  padding: 0.4rem 0 0.4rem 1.5rem;
+  padding: 0.2rem 0 0.2rem 1.4rem;
   border-left: 1px solid var(--clr-accent);
   color: var(--clr-text);
-  font-family: var(--ff-display);
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   line-height: 1.35;
 }
 
 .prose code {
   padding: 0.15em 0.4em;
-  font-size: 0.9em;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 0.35rem;
+  font-family: var(--ff-mono);
+  font-size: 0.82em;
+  background: rgba(242, 237, 228, 0.08);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+}
+
+.prose li + li {
+  margin-top: 0.4em;
 }
 
 .prose img {
-  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-line);
 }
 
 /* ==========================================================================
@@ -490,26 +659,25 @@ app-image-details {
 
 .mat-mdc-menu-panel.mdc-menu-surface {
   min-width: 13rem;
-  padding: 0.45rem !important;
-  background: rgba(9, 14, 24, 0.92) !important;
+  padding: 0.4rem !important;
+  background: var(--clr-surface) !important;
   border: 1px solid var(--clr-line) !important;
-  border-radius: var(--radius-md) !important;
+  border-radius: var(--radius-sm) !important;
   box-shadow: var(--shadow-soft) !important;
-  backdrop-filter: blur(1.5rem) !important;
 }
 
 .mat-mdc-menu-item {
-  min-height: 2.6rem !important;
-  border-radius: var(--radius-sm);
+  min-height: 2.5rem !important;
+  border-radius: 0;
   color: var(--clr-muted-strong);
-  font-family: var(--ff-sans) !important;
+  font-family: var(--ff-mono) !important;
   font-size: var(--fs-300) !important;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
 }
 
 .mat-mdc-menu-item:hover:not([disabled]),
 .mat-mdc-menu-item.cdk-focused:not([disabled]) {
-  background: rgba(255, 255, 255, 0.07) !important;
+  background: rgba(242, 237, 228, 0.07) !important;
   color: var(--clr-text) !important;
 }
 
@@ -522,26 +690,26 @@ app-image-details {
    ========================================================================== */
 
 .pswp {
-  --pswp-bg: var(--clr-bg);
+  --pswp-bg: #08080a;
 }
 
 .pswp__caption__center {
   max-width: 48rem;
   padding: 1.25rem 1.5rem;
-  font-family: var(--ff-sans);
-  font-size: var(--fs-300);
+  font-family: var(--ff-display);
+  font-size: var(--fs-500);
   line-height: 1.6;
   color: var(--clr-muted-strong);
 }
 
 .pswp__counter {
-  font-family: var(--ff-sans);
+  font-family: var(--ff-mono);
   font-size: var(--fs-200);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.04em;
 }
 
 .pswp__button {
-  opacity: 0.75;
+  opacity: 0.7;
 }
 
 .pswp__button:hover {
@@ -554,49 +722,92 @@ app-image-details {
 
 .site-footer {
   width: min(100% - (var(--page-gutter) * 2), var(--content-max));
-  margin: clamp(2rem, 5vw, 5rem) auto 0;
-  padding: 2rem 0 2.4rem;
+  margin: clamp(2.5rem, 6vw, 5rem) auto 0;
+  padding: 1.5rem 0 2.25rem;
   border-top: 1px solid var(--clr-line);
 }
 
 .site-footer__inner {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
   color: var(--clr-muted);
+  font-family: var(--ff-mono);
   font-size: var(--fs-200);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .site-footer__brand {
   display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
+  align-items: baseline;
+  gap: 0.6rem;
   color: var(--clr-text);
   text-decoration: none;
 }
 
 .site-footer__brand img {
-  width: 1.4rem;
-  height: 1.4rem;
-  opacity: 0.8;
+  width: 1.05rem;
+  height: 1.05rem;
+  opacity: 0.75;
+  align-self: center;
+}
+
+.site-footer__brand span {
+  font-family: var(--ff-display);
+  font-size: 1.35rem;
+  letter-spacing: 0;
 }
 
 .site-footer__note {
   color: var(--clr-muted);
 }
 
+.site-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--clr-muted);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 180ms ease-out;
+}
+
+.site-footer__top svg {
+  width: 0.7rem;
+  height: 0.7rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+}
+
+.site-footer__top:hover,
+.site-footer__top:focus-visible {
+  color: var(--clr-accent);
+}
+
 /* ==========================================================================
    Motion
+
+   One authored entrance: plates are wiped in from the frame edge, once, on
+   the masthead. Everything else is a short state change.
    ========================================================================== */
 
-@keyframes fade-up {
+@keyframes plate-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes row-in {
   from {
     opacity: 0;
-    transform: translateY(1.5rem);
+    transform: translateY(0.75rem);
   }
   to {
     opacity: 1;
@@ -604,14 +815,9 @@ app-image-details {
   }
 }
 
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-@keyframes scroll-line {
-  0%, 100% { transform: scaleY(0.35); transform-origin: top; opacity: 0.4; }
-  50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.85; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -625,11 +831,5 @@ app-image-details {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 47.99em) {
-  body {
-    background-attachment: scroll;
   }
 }

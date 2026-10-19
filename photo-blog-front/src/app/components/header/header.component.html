@@ -1,11 +1,9 @@
 <header class="primary-header">
   <div class="header-inner">
-    <a class="brand" [routerLink]="['']" (click)="closeMobileNav()" aria-label="Astrophotography home">
-      <span class="brand__mark">
-        <img src="assets/shared/telescope-svgrepo-com.svg" alt="">
-      </span>
+    <a class="brand" [routerLink]="['']" (click)="closeMobileNav()">
+      <img class="brand__mark" src="assets/shared/telescope-svgrepo-com.svg" alt="">
       <span class="brand__copy">
-        <span class="brand__name">Astro<em>photo</em></span>
+        <span class="brand__name">Astrophoto</span>
         <span class="brand__tagline">{{ brandTagline }}</span>
       </span>
     </a>
@@ -43,7 +41,9 @@
                 [class.active]="isRouterLinkActive(category)"
                 [matMenuTriggerFor]="menu">
                 {{ category.name }}
-                <span class="nav-link__chevron" aria-hidden="true"></span>
+                <svg class="nav-link__chevron" viewBox="0 0 10 10" aria-hidden="true">
+                  <path d="M2.5 3.5 5 6l2.5-2.5"/>
+                </svg>
               </button>
 
               <mat-menu #menu="matMenu">
@@ -70,6 +70,7 @@
           (click)="changeLanguage('en')">
           EN
         </button>
+        <span class="language-selector__divider" aria-hidden="true">/</span>
         <button
           type="button"
           [class.active]="isLanguageActive('pl')"

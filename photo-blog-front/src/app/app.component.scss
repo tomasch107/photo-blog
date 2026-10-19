@@ -1,19 +1,2 @@
-.site-footer__brand em {
-  margin-left: 0.05em;
-  font-family: var(--ff-display);
-  font-size: 1.3em;
-  font-style: italic;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--clr-accent);
-}
-
-.site-footer a:last-child {
-  color: var(--clr-muted-strong);
-  text-decoration: none;
-  transition: color 200ms ease;
-}
-
-.site-footer a:last-child:hover {
-  color: var(--clr-accent);
-}
+/* Shell chrome (header, footer, skip link) is defined in the global system:
+   see src/styles.scss. */

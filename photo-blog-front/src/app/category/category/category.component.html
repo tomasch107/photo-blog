@@ -1,63 +1,65 @@
-<section class="gallery-page">
-  <header class="gallery-header">
-    <p class="eyebrow">{{ collectionLabel }}</p>
+<main class="gallery-page" id="main" tabindex="-1">
+  <a
+    class="plate gallery-cover"
+    *ngIf="coverPost as newest"
+    [routerLink]="['/images', newest.slug]">
+    <span class="plate__frame gallery-cover__frame">
+      <img [src]="getCoverImage(newest)" [alt]="newest.title">
+    </span>
+    <span class="plate__caption">
+      <span class="plate__title">{{ newest.title }}</span>
+      <span class="plate__meta">{{ newest.date | date:'yyyy' }}</span>
+    </span>
+  </a>
 
-    <div class="gallery-heading">
-      <h1 class="display-title" *ngIf="categoryName">{{ categoryName }}</h1>
-      <span class="pill gallery-count" *ngIf="totalCount">
-        {{ totalCount }} {{ getFramesLabel(totalCount) }}
-      </span>
-    </div>
+  <header class="gallery-header">
+    <h1 class="display-title gallery-title" *ngIf="categoryName">{{ categoryName }}</h1>
+    <span class="data-label gallery-count" *ngIf="totalCount">
+      {{ totalCount }} {{ getFramesLabel(totalCount) }}
+    </span>
   </header>
 
   <div class="gallery-skeleton" *ngIf="loading && posts.length === 0" aria-hidden="true">
-    <span class="skeleton-card" *ngFor="let item of skeletonItems"></span>
+    <span class="skeleton-plate" *ngFor="let item of skeletonItems"></span>
   </div>
 
   <ul
     class="gallery-grid"
-    *ngIf="posts.length"
-    [class.gallery-grid--single]="posts.length === 1"
-    [class.gallery-grid--double]="posts.length === 2"
+    *ngIf="gridPosts.length"
     infiniteScroll
     [infiniteScrollDistance]="1.5"
     [infiniteScrollThrottle]="200"
     [infiniteScrollDisabled]="loading || endOfList"
     (scrolled)="onScroll()">
-    <li class="gallery-card" *ngFor="let post of posts; index as i" [class.gallery-card--featured]="i === 0 && posts.length > 2">
-      <a class="gallery-card__link" [routerLink]="['/images', post.slug]">
-        <div class="gallery-card__media">
+    <li *ngFor="let post of gridPosts">
+      <a class="plate" [routerLink]="['/images', post.slug]">
+        <span class="plate__frame">
           <img [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
-        </div>
-
-        <span class="gallery-card__index">{{ i + 1 }}</span>
-
-        <div class="gallery-card__content">
-          <div class="gallery-card__heading">
-            <h2>{{ post.title }}</h2>
-            <span>{{ post.date | date:'yyyy' }}</span>
-          </div>
-          <span class="gallery-card__cta">{{ viewFrameLabel }} <span aria-hidden="true">↗</span></span>
-        </div>
+        </span>
+        <span class="plate__caption">
+          <span class="plate__title">{{ post.title }}</span>
+          <span class="plate__meta">{{ post.date | date:'yyyy' }}</span>
+        </span>
       </a>
     </li>
   </ul>
 
   <div class="gallery-empty" *ngIf="!loading && !posts.length">
-    <span class="gallery-empty__orbit" aria-hidden="true"></span>
-    <p>{{ emptyLabel }}</p>
+    <p class="gallery-empty__copy">{{ emptyLabel }}</p>
   </div>
 
   <div class="gallery-footer" *ngIf="posts.length">
     <button
-      class="button button--ghost gallery-load-more"
+      class="button gallery-load-more"
       type="button"
       *ngIf="!endOfList"
       (click)="loadMore()"
       [disabled]="loading">
       {{ loadMoreLabel }}
-      <span aria-hidden="true">↓</span>
+      <span class="button__icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg>
+      </span>
     </button>
-    <span class="gallery-end" *ngIf="endOfList">{{ endLabel }}</span>
+    <span class="gallery-end data-label" *ngIf="endOfList">{{ endLabel }}</span>
   </div>
-</section>
+</main>

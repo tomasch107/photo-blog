@@ -3,8 +3,8 @@
     <p class="eyebrow">{{ collectionLabel }}</p>
 
     <div class="gallery-heading">
-      <h1 class="display-title">{{ displayCategoryName }}</h1>
-      <span class="pill gallery-count" *ngIf="!loading || posts.length">
+      <h1 class="display-title" *ngIf="categoryName">{{ categoryName }}</h1>
+      <span class="pill gallery-count" *ngIf="posts.length">
         {{ posts.length }} {{ getFramesLabel(posts.length) }}
       </span>
     </div>

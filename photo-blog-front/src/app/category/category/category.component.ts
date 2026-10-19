@@ -67,8 +67,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
     return this.languageCode === 'pl' ? 'Zobacz kadr' : 'View frame';
   }
 
-  get displayCategoryName(): string {
-    return this.categoryName || (this.languageCode === 'pl' ? 'Galeria' : 'Gallery');
+  get allCapturesLabel(): string {
+    return this.languageCode === 'pl' ? 'Wszystkie kadry' : 'All captures';
   }
 
   get loadMoreLabel(): string {
@@ -102,15 +102,19 @@ export class CategoryComponent implements OnInit, OnDestroy {
       combineLatest([this.languageService.currentLanguage$, this.route.paramMap]).subscribe(([language, params]) => {
         this.languageCode = language;
         this.categoryCode = params.get('categoryCode');
-        this.categoryName = this.categoryCode?.includes('all')
-          ? (language === 'pl' ? 'Wszystkie kadry' : 'All captures')
-          : '';
+        this.categoryName = '';
 
         if (this.categoryCode) {
+          const categoryCode = this.categoryCode;
           this.subscriptions.add(
-            this.categoryService.getCategoryForCode(this.categoryCode).subscribe((categories) => {
+            this.categoryService.getCategoryForCode(categoryCode).subscribe((categories) => {
+              if (this.categoryCode !== categoryCode) {
+                return;
+              }
+
               const category = categories.data[0];
-              this.categoryName = category?.name || this.categoryName;
+              this.categoryName = category?.name
+                ?? (categoryCode.includes('all') ? this.allCapturesLabel : '');
               this.renderingService.changeBodyBackgroundImage(category?.background);
             })
           )

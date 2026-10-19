@@ -20,8 +20,9 @@
     [class.gallery-grid--single]="posts.length === 1"
     [class.gallery-grid--double]="posts.length === 2"
     infiniteScroll
-    [infiniteScrollDistance]="2"
-    [infiniteScrollThrottle]="50"
+    [infiniteScrollDistance]="1.5"
+    [infiniteScrollThrottle]="200"
+    [infiniteScrollDisabled]="loading || endOfList"
     (scrolled)="onScroll()">
     <li class="gallery-card" *ngFor="let post of posts; index as i" [class.gallery-card--featured]="i === 0 && posts.length > 2">
       <a class="gallery-card__link" [routerLink]="['/images', post.slug]">

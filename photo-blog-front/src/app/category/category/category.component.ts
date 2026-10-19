@@ -14,7 +14,7 @@ import {RenderingService} from "../../services/rendering.service";
   styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent implements OnInit, OnDestroy {
-  pageSize = 25;
+  pageSize = 12;
   currentPage = 1;
 
   posts: Post[] = [];
@@ -40,6 +40,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   loading = true;
   endOfList = true;
   skeletonItems = [1, 2, 3, 4, 5, 6];
+  private loadToken = 0;
 
   get collectionLabel(): string {
     return this.languageCode === 'pl' ? 'Kolekcja' : 'Collection';
@@ -131,6 +132,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   private loadPosts(categoryCode: string) {
     this.loading = true;
+    const token = ++this.loadToken;
 
     this.subscriptions.add(this.languageService.currentLanguage$.pipe(take(1), switchMap((language) => {
           this.languageCode = language;
@@ -141,6 +143,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
         })
       ).subscribe({
         next: data => {
+          if (token !== this.loadToken) {
+            return;
+          }
+
           this.currentPage++;
           this.posts?.push(...data.data)
           this.totalCount = data.meta.pagination.total;
@@ -148,6 +154,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: () => {
+          if (token !== this.loadToken) {
+            return;
+          }
+
           this.totalCount = 0;
           this.endOfList = true;
           this.loading = false;

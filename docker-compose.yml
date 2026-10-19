@@ -1,4 +1,13 @@
 version: '3'
+
+# Pins the Compose project name so the named volume and container names are
+# stable regardless of the directory the repo is cloned into. Without this,
+# Compose derives the prefix from the folder name, and a differently-named
+# folder silently creates a new, empty "photo-blog-data" volume.
+# Do not change this value on a running deployment: it would orphan the
+# existing volume (and therefore the database).
+name: photo-blog
+
 services:
   photo-blog:
     container_name: photo-blog

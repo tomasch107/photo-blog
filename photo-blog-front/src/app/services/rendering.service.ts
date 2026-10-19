@@ -1,4 +1,4 @@
-import {Inject, Injectable, Renderer2, RendererFactory2} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {Subject} from "rxjs";
 import {Image} from "../model/image.model";
@@ -8,21 +8,20 @@ import {environment} from "../../environments/environment";
   providedIn: 'root'
 })
 export class RenderingService {
-  private renderer2: Renderer2;
   documentClickedTarget: Subject<HTMLElement> = new Subject<HTMLElement>()
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    rendererFactory: RendererFactory2
-  ) {
-    this.renderer2 = rendererFactory.createRenderer(document, null);
-
+  constructor(@Inject(DOCUMENT) private document: Document) {
   }
-  changeBodyBackgroundImage(image: Image) {
-    const baseUrl = environment.baseUrl;
 
-    if (image) {
-      this.renderer2.setStyle(document.body, 'background-image', `url(${baseUrl}${image.url})`);
+  changeBodyBackgroundImage(image?: Image | null) {
+    const baseUrl = environment.baseUrl;
+    const body = this.document.body;
+
+    if (image?.url) {
+      // Renderer2 does not support CSS custom properties, so set the variable directly.
+      body.style.setProperty('--page-background-image', `url("${baseUrl}${image.url}")`);
+    } else {
+      body.style.removeProperty('--page-background-image');
     }
   }
 }

@@ -24,6 +24,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switchMap(() => this.categoryService.getAllCategories())
   )
 
+  get brandTagline(): string {
+    return this.languageService.currentLanguage$.value === 'pl'
+      ? 'Dziennik nieba'
+      : 'Deep sky journal';
+  }
+
   constructor(private categoryService: CategoryService, private renderer2: Renderer2, private router: Router, private languageService: LanguageService, private renderingService: RenderingService,     @Inject(DOCUMENT) private document: Document,
   ) {
   }
@@ -46,6 +52,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.renderer2.setAttribute(this.nav?.nativeElement, "data-visible", String(open))
     this.renderer2.setAttribute(this.navToggle?.nativeElement, "aria-expanded", String(open))
+  }
+
+  closeMobileNav() {
+    if (this.nav?.nativeElement.getAttribute('data-visible') === 'true') {
+      this.toggleMobileNavbar(false);
+    }
   }
 
   ngOnInit() {

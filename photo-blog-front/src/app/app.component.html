@@ -1,4 +1,18 @@
-<app-header></app-header>
+<div class="app-shell" id="top">
+  <app-header></app-header>
 
-<router-outlet>
-</router-outlet>
+  <div class="app-content">
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <a class="site-footer__brand" [routerLink]="['']" aria-label="Astrophotography home">
+        <img src="assets/shared/telescope-svgrepo-com.svg" alt="">
+        <span>Astro<em>photo</em></span>
+      </a>
+      <span class="site-footer__note">© {{ currentYear }} Astrophoto</span>
+      <a href="#top" aria-label="Back to top">↑</a>
+    </div>
+  </footer>
+</div>

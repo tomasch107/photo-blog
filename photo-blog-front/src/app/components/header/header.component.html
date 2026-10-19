@@ -1,32 +1,83 @@
-<header class="primary-header flex">
-  <div>
-    <img [routerLink]="['']" height="40" src="/assets/shared/telescope-svgrepo-com.svg" alt="space tourism logo"
-         class="logo">
-  </div>
-  <button #navTogle class="mobile-nav-toggle" (click)="mobileToggle()" aria-controls="primary-navigation"><span
-    class="sr-only" aria-expanded="false">Menu</span></button>
-  <nav>
-    <ul #nav id="primary-navigation" data-visible="false" class="primary-navigation underline-indicators flex">
-      <div class="language-selector">
-        <span [class.active]="isLanguageActive('en')" (click)="changeLanguage('en')">EN</span>
-        <span [class.active]="isLanguageActive('pl')" (click)="changeLanguage('pl')">PL</span>
-      </div>
-      <ng-container class="categories" *ngIf="categories$ | async as categories">
-        <ng-container *ngFor="let category of categories.data">
-          <li *ngIf="!category.categories.length" [routerLink]="['/categories', category.code]"
-              [class.active]="isRouterLinkActive(category)"><a
-            class="ff-sans-cond uppercase text-white letter-spacing-2">{{category.name}}</a></li>
-            <li  [matMenuTriggerFor]="menu" *ngIf="category.categories.length"
-                class="parent-category ff-sans-cond uppercase text-white letter-spacing-2">{{category.name}}
-                <mat-menu #menu="matMenu">
-                <ng-container *ngFor="let subCategory of category.categories">
-                  <li mat-menu-item [class.active]="isRouterLinkActive(subCategory)" class="subcategory ff-sans-cond uppercase text-white letter-spacing-2"
-                      [routerLink]="['/categories', subCategory.code]">{{subCategory.name}}</li>
-                </ng-container>
-                </mat-menu>
+<header class="primary-header">
+  <div class="header-inner">
+    <a class="brand" [routerLink]="['']" (click)="closeMobileNav()" aria-label="Astrophotography home">
+      <span class="brand__mark">
+        <img src="assets/shared/telescope-svgrepo-com.svg" alt="">
+      </span>
+      <span class="brand__copy">
+        <span class="brand__name">Astro<em>photo</em></span>
+        <span class="brand__tagline">{{ brandTagline }}</span>
+      </span>
+    </a>
+
+    <button
+      #navTogle
+      type="button"
+      class="mobile-nav-toggle"
+      (click)="mobileToggle()"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="nav-toggle-line"></span>
+      <span class="nav-toggle-line"></span>
+      <span class="nav-toggle-line"></span>
+    </button>
+
+    <nav #nav id="primary-navigation" data-visible="false" class="primary-navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <ng-container *ngIf="categories$ | async as categories">
+          <ng-container *ngFor="let category of categories.data">
+            <li *ngIf="!category.categories?.length">
+              <a
+                [routerLink]="['/categories', category.code]"
+                [class.active]="isRouterLinkActive(category)"
+                (click)="closeMobileNav()">
+                {{ category.name }}
+              </a>
             </li>
+
+            <li *ngIf="category.categories?.length" class="has-menu">
+              <button
+                type="button"
+                class="nav-link parent-category"
+                [class.active]="isRouterLinkActive(category)"
+                [matMenuTriggerFor]="menu">
+                {{ category.name }}
+                <span class="nav-link__chevron" aria-hidden="true"></span>
+              </button>
+
+              <mat-menu #menu="matMenu">
+                <button
+                  *ngFor="let subCategory of category.categories"
+                  mat-menu-item
+                  class="subcategory"
+                  [class.active]="isRouterLinkActive(subCategory)"
+                  [routerLink]="['/categories', subCategory.code]"
+                  (click)="closeMobileNav()">
+                  {{ subCategory.name }}
+                </button>
+              </mat-menu>
+            </li>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </ul>
-  </nav>
+      </ul>
+
+      <div class="language-selector" role="group" aria-label="Language">
+        <button
+          type="button"
+          [class.active]="isLanguageActive('en')"
+          [attr.aria-pressed]="isLanguageActive('en')"
+          (click)="changeLanguage('en')">
+          EN
+        </button>
+        <button
+          type="button"
+          [class.active]="isLanguageActive('pl')"
+          [attr.aria-pressed]="isLanguageActive('pl')"
+          (click)="changeLanguage('pl')">
+          PL
+        </button>
+      </div>
+    </nav>
+  </div>
 </header>

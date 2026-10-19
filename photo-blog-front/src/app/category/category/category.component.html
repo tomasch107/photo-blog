@@ -1,15 +1,62 @@
-<ng-container *ngIf="posts">
-  <ul infiniteScroll
-      [infiniteScrollDistance]="2"
-      [infiniteScrollThrottle]="50"
-      (scrolled)="onScroll()">
-    <li  *ngFor="let post of posts" [routerLink]="['/images', post.slug]">
-      <img *ngIf="!post.thumbnail" src="{{baseUrl}}{{post.images[0].formats['medium'].url}}">
-      <img *ngIf="post.thumbnail" src="{{baseUrl}}{{post.thumbnail.formats['medium'].url}}">
-      <span class="ff-sans-cond  fs-400 "> {{post.title}} </span>
+<section class="gallery-page">
+  <header class="gallery-header">
+    <p class="eyebrow">{{ collectionLabel }}</p>
+
+    <div class="gallery-heading">
+      <h1 class="display-title">{{ displayCategoryName }}</h1>
+      <span class="pill gallery-count" *ngIf="!loading || posts.length">
+        {{ posts.length }} {{ getFramesLabel(posts.length) }}
+      </span>
+    </div>
+  </header>
+
+  <div class="gallery-skeleton" *ngIf="loading && posts.length === 0" aria-hidden="true">
+    <span class="skeleton-card" *ngFor="let item of skeletonItems"></span>
+  </div>
+
+  <ul
+    class="gallery-grid"
+    *ngIf="posts.length"
+    [class.gallery-grid--single]="posts.length === 1"
+    [class.gallery-grid--double]="posts.length === 2"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()">
+    <li class="gallery-card" *ngFor="let post of posts; index as i" [class.gallery-card--featured]="i === 0 && posts.length > 2">
+      <a class="gallery-card__link" [routerLink]="['/images', post.slug]">
+        <div class="gallery-card__media">
+          <img [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
+        </div>
+
+        <span class="gallery-card__index">{{ i + 1 }}</span>
+
+        <div class="gallery-card__content">
+          <div class="gallery-card__heading">
+            <h2>{{ post.title }}</h2>
+            <span>{{ post.date | date:'yyyy' }}</span>
+          </div>
+          <span class="gallery-card__cta">{{ viewFrameLabel }} <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
     </li>
   </ul>
-  <div class="load-more">
-    <span *ngIf="!endOfList" (click)="loadMore()">{{ languageCode === 'en' ? 'Load more' : 'Załaduj więcej' }}</span>
+
+  <div class="gallery-empty" *ngIf="!loading && !posts.length">
+    <span class="gallery-empty__orbit" aria-hidden="true"></span>
+    <p>{{ emptyLabel }}</p>
   </div>
-</ng-container>
+
+  <div class="gallery-footer" *ngIf="posts.length">
+    <button
+      class="button button--ghost gallery-load-more"
+      type="button"
+      *ngIf="!endOfList"
+      (click)="loadMore()"
+      [disabled]="loading">
+      {{ loadMoreLabel }}
+      <span aria-hidden="true">↓</span>
+    </button>
+    <span class="gallery-end" *ngIf="endOfList">{{ endLabel }}</span>
+  </div>
+</section>

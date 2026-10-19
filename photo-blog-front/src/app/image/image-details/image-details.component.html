@@ -1,18 +1,90 @@
-<div class="container">
-  <ng-container *ngIf="posts$ | async as posts">
+<section class="detail-page" *ngIf="posts$ | async as posts; else detailLoading">
     <ng-container *ngIf="posts.data[0] as post">
-      <img (click)="openImage(post.images)" src="{{baseUrl}}{{post.images[0].formats['large'].url}}">
-      <h1>{{post.title}}</h1>
-      <markdown [data]="post.description"></markdown>
-      <app-photoswipe #photoSwipe></app-photoswipe>
-      <ul>
+        <a class="detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
+            <span aria-hidden="true">←</span> {{ backLabel }}
+        </a>
 
-        <ng-container *ngFor="let image of post.images | slice:1;  index as i">
-          <li>
-            <img (click)="openImage(post.images, i + 1)"  src="{{baseUrl}}{{image.formats['medium'].url}}">
-          </li>
-        </ng-container>
-      </ul>
+        <header class="detail-header">
+            <p class="eyebrow">{{ post.category ? post.category.name : 'Deep sky' }}</p>
+
+            <div class="detail-title-row">
+                <h1 class="display-title">{{ post.title }}</h1>
+
+                <div class="detail-meta">
+                    <span *ngIf="post.date">
+            <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
+          </span>
+                    <span>{{ post.images.length }} {{ getFramesLabel(post.images.length) }}</span>
+                </div>
+            </div>
+        </header>
+
+        <figure class="detail-hero">
+            <button type="button" class="detail-hero__button" (click)="openImage(post.images)" [attr.aria-label]="zoomHint">
+        <img
+          *ngIf="post.images[0]"
+          [src]="getImageUrl(post.images[0])"
+          [alt]="post.title">
+        <span class="detail-hero__hint">
+          {{ zoomHint }}
+          <span aria-hidden="true">↗</span>
+        </span>
+      </button>
+        </figure>
+
+        <div class="detail-body">
+            <article class="detail-copy">
+                <markdown class="prose" *ngIf="post.description; else noDescription" [data]="post.description">
+                </markdown>
+                <ng-template #noDescription>
+                    <p class="prose detail-empty-copy">{{ descriptionFallback }}</p>
+                </ng-template>
+            </article>
+
+            <aside class="detail-aside">
+                <div class="detail-fact">
+                    <span>{{ objectLabel }}</span>
+                    <strong>{{ post.title }}</strong>
+                </div>
+                <div class="detail-fact" *ngIf="post.date">
+                    <span>{{ capturedLabel }}</span>
+                    <strong>{{ post.date | date:'yyyy.MM.dd' }}</strong>
+                </div>
+                <div class="detail-fact" *ngIf="post.category">
+                    <span>{{ collectionLabel }}</span>
+                    <strong>{{ post.category.name }}</strong>
+                </div>
+            </aside>
+        </div>
+
+        <section class="detail-gallery" *ngIf="post.images.length > 1">
+            <div class="detail-gallery__header">
+                <p class="eyebrow">{{ moreFramesLabel }}</p>
+                <span>{{ post.images.length - 1 }}</span>
+            </div>
+
+            <ul class="detail-thumbs">
+                <li *ngFor="let image of post.images | slice:1; index as i">
+                    <button type="button" (click)="openImage(post.images, i + 1)" [attr.aria-label]="'Open image ' + (i + 2)">
+            <img
+              [src]="getImageUrl(image, 'medium')"
+              [alt]="post.title + ' — ' + (i + 2)"
+              loading="lazy">
+          </button>
+                </li>
+            </ul>
+        </section>
+
+        <app-photoswipe #photoSwipe></app-photoswipe>
     </ng-container>
-  </ng-container>
-</div>
+</section>
+
+<ng-template #detailLoading>
+    <section class="detail-page detail-page--loading" aria-hidden="true">
+        <div class="skeleton skeleton--back"></div>
+        <div class="skeleton skeleton--eyebrow"></div>
+        <div class="skeleton skeleton--title"></div>
+        <div class="skeleton skeleton--hero"></div>
+        <div class="skeleton skeleton--copy"></div>
+    </section>
+</ng-template>

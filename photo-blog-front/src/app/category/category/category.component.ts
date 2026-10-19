@@ -35,7 +35,62 @@ export class CategoryComponent implements OnInit, OnDestroy {
   baseUrl = environment.baseUrl;
   subscriptions = new Subscription();
   categoryCode: string | null = '';
+  categoryName = '';
+  loading = true;
   endOfList = true;
+  skeletonItems = [1, 2, 3, 4, 5, 6];
+
+  get collectionLabel(): string {
+    return this.languageCode === 'pl' ? 'Kolekcja' : 'Collection';
+  }
+
+  getFramesLabel(count: number): string {
+    if (this.languageCode !== 'pl') {
+      return count === 1 ? 'frame' : 'frames';
+    }
+
+    const lastDigit = count % 10;
+    const lastTwoDigits = count % 100;
+
+    if (count === 1) {
+      return 'kadr';
+    }
+
+    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
+      return 'kadry';
+    }
+
+    return 'kadrów';
+  }
+
+  get viewFrameLabel(): string {
+    return this.languageCode === 'pl' ? 'Zobacz kadr' : 'View frame';
+  }
+
+  get displayCategoryName(): string {
+    return this.categoryName || (this.languageCode === 'pl' ? 'Galeria' : 'Gallery');
+  }
+
+  get loadMoreLabel(): string {
+    return this.languageCode === 'pl' ? 'Załaduj więcej' : 'Load more';
+  }
+
+  get endLabel(): string {
+    return this.languageCode === 'pl' ? 'Koniec kolekcji' : 'End of collection';
+  }
+
+  get emptyLabel(): string {
+    return this.languageCode === 'pl'
+      ? 'Ta kolekcja jest jeszcze pusta. Wróć wkrótce.'
+      : 'This collection is still empty. Check back soon.';
+  }
+
+  getPostImage(post: Post): string {
+    const image = post.thumbnail || post.images?.[0];
+    const url = image?.formats?.['medium']?.url || image?.url || '';
+
+    return url ? `${this.baseUrl}${url}` : '';
+  }
 
 
   ngOnDestroy() {
@@ -45,16 +100,23 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscriptions.add(
       combineLatest([this.languageService.currentLanguage$, this.route.paramMap]).subscribe(([language, params]) => {
+        this.languageCode = language;
         this.categoryCode = params.get('categoryCode');
+        this.categoryName = this.categoryCode?.includes('all')
+          ? (language === 'pl' ? 'Wszystkie kadry' : 'All captures')
+          : '';
+
         if (this.categoryCode) {
           this.subscriptions.add(
             this.categoryService.getCategoryForCode(this.categoryCode).subscribe((categories) => {
               const category = categories.data[0];
+              this.categoryName = category?.name || this.categoryName;
               this.renderingService.changeBodyBackgroundImage(category?.background);
             })
           )
           this.posts = [];
           this.currentPage = 1;
+          this.endOfList = false;
           this.loadPosts(this.categoryCode);
         }
       })
@@ -62,6 +124,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   private loadPosts(categoryCode: string) {
+    this.loading = true;
+
     this.subscriptions.add(this.languageService.currentLanguage$.pipe(take(1), switchMap((language) => {
           this.languageCode = language;
           if (categoryCode.includes('all')) {
@@ -69,22 +133,29 @@ export class CategoryComponent implements OnInit, OnDestroy {
           }
           return this.categoryService.getImagesForCategory(categoryCode, this.currentPage, this.pageSize);
         })
-      ).subscribe(data => {
-        this.currentPage++;
-        this.posts?.push(...data.data)
-        this.endOfList = this.posts.length >= data.meta.pagination.total;
+      ).subscribe({
+        next: data => {
+          this.currentPage++;
+          this.posts?.push(...data.data)
+          this.endOfList = this.posts.length >= data.meta.pagination.total;
+          this.loading = false;
+        },
+        error: () => {
+          this.endOfList = true;
+          this.loading = false;
+        }
       })
     )
   }
 
   onScroll() {
-    if (this.categoryCode && !this.endOfList) {
+    if (this.categoryCode && !this.loading && !this.endOfList) {
       this.loadPosts(this.categoryCode);
     }
   }
 
   loadMore() {
-    if (this.categoryCode && !this.endOfList) {
+    if (this.categoryCode && !this.loading && !this.endOfList) {
       this.loadPosts(this.categoryCode);
     }
   }

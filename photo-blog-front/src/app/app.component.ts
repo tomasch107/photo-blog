@@ -10,6 +10,7 @@ import {RenderingService} from "./services/rendering.service";
 })
 export class AppComponent implements OnInit{
   title = 'photo-blog-front';
+  currentYear = new Date().getFullYear();
 
   blogPost$: Observable<any> | undefined;
 

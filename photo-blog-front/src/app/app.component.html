@@ -1,5 +1,5 @@
 <div class="app-shell" id="top">
-  <a class="skip-to-content" href="#main" (click)="skipTo('main', $event)">Skip to content</a>
+  <a class="skip-to-content" href="#main" (click)="skipTo('main', $event)">{{ 'app.skipToContent' | translate }}</a>
 
   <app-header></app-header>
 
@@ -9,13 +9,13 @@
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <a class="site-footer__brand" [routerLink]="['']" aria-label="Astrophoto home">
+      <a class="site-footer__brand" [routerLink]="['']" [attr.aria-label]="'app.homeAriaLabel' | translate">
         <img src="assets/shared/telescope-svgrepo-com.svg" alt="">
         <span>Astrophoto</span>
       </a>
-      <span class="site-footer__note">© {{ currentYear }} Astrophoto — deep sky archive</span>
+      <span class="site-footer__note">{{ 'app.footerNote' | translate: {year: currentYear} }}</span>
       <a class="site-footer__top" href="#top" (click)="skipTo('top', $event)">
-        Back to top
+        {{ 'app.backToTop' | translate }}
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5V3M3.5 7.5 8 3l4.5 4.5"/></svg>
       </a>
     </div>

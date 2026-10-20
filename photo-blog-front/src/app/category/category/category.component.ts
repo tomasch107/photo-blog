@@ -1,12 +1,13 @@
 import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {combineLatest, Subscription, switchMap, take} from "rxjs";
+import {combineLatest, catchError, of, Subscription, switchMap, take} from "rxjs";
 import {Post, Image} from "../../model/image.model";
 import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
 import {LanguageService} from "../../services/language.service";
 import {RenderingService} from "../../services/rendering.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-category',
@@ -19,8 +20,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   posts: Post[] = [];
 
-  languageCode = 'en';
-
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
@@ -28,6 +27,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private languageService: LanguageService,
     private renderingService: RenderingService,
+    private translate: TranslateService,
     private cd: ChangeDetectorRef
   ) {
   }
@@ -38,6 +38,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   categoryName = '';
   totalCount = 0;
   loading = true;
+  loadError = false;
   endOfList = true;
   skeletonItems = [1, 2, 3, 4, 5, 6];
   private loadToken = 0;
@@ -54,41 +55,39 @@ export class CategoryComponent implements OnInit, OnDestroy {
     return this.posts.slice(1);
   }
 
-  getFramesLabel(count: number): string {
-    if (this.languageCode !== 'pl') {
-      return count === 1 ? 'frame' : 'frames';
-    }
-
+  getFramesCountKey(count: number): string {
     const lastDigit = count % 10;
     const lastTwoDigits = count % 100;
 
     if (count === 1) {
-      return 'kadr';
+      return 'units.frames.one';
     }
 
     if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
-      return 'kadry';
+      return 'units.frames.few';
     }
 
-    return 'kadrów';
+    return 'units.frames.many';
   }
 
-  get allCapturesLabel(): string {
-    return this.languageCode === 'pl' ? 'Wszystkie kadry' : 'All captures';
+  get showSkeleton(): boolean {
+    return this.loading && !this.posts.length;
   }
 
-  get loadMoreLabel(): string {
-    return this.languageCode === 'pl' ? 'Załaduj więcej' : 'Load more';
-  }
+  get statusKey(): string {
+    if (this.showSkeleton) {
+      return 'category.loading';
+    }
 
-  get endLabel(): string {
-    return this.languageCode === 'pl' ? 'Koniec kolekcji' : 'End of collection';
-  }
+    if (this.loadError) {
+      return 'category.error';
+    }
 
-  get emptyLabel(): string {
-    return this.languageCode === 'pl'
-      ? 'Ta kolekcja jest jeszcze pusta. Wróć wkrótce.'
-      : 'This collection is still empty. Check back soon.';
+    if (!this.loading && !this.posts.length) {
+      return 'category.empty';
+    }
+
+    return '';
   }
 
   getPostImage(post: Post): string {
@@ -116,22 +115,37 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptions.add(
-      combineLatest([this.languageService.currentLanguage$, this.route.paramMap]).subscribe(([language, params]) => {
-        this.languageCode = language;
+      combineLatest([this.languageService.currentLanguage$, this.route.paramMap]).subscribe(([, params]) => {
         this.categoryCode = params.get('categoryCode');
         this.categoryName = '';
+        this.loadError = false;
 
         if (this.categoryCode) {
           const categoryCode = this.categoryCode;
           this.subscriptions.add(
-            this.categoryService.getCategoryForCode(categoryCode).subscribe((categories) => {
+            this.categoryService.getCategoryForCode(categoryCode).pipe(
+              catchError(() => of(null))
+            ).subscribe((categories) => {
               if (this.categoryCode !== categoryCode) {
                 return;
               }
 
-              const category = categories.data[0];
-              this.categoryName = category?.name
-                ?? (categoryCode.includes('all') ? this.allCapturesLabel : '');
+              const category = categories?.data[0];
+
+              if (category?.name) {
+                this.categoryName = category.name;
+                return;
+              }
+
+              if (categoryCode.includes('all')) {
+                this.subscriptions.add(
+                  this.translate.get('category.all').subscribe((label) => {
+                    if (this.categoryCode === categoryCode) {
+                      this.categoryName = label;
+                    }
+                  })
+                );
+              }
             })
           )
           this.posts = [];
@@ -146,10 +160,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   private loadPosts(categoryCode: string) {
     this.loading = true;
+    this.loadError = false;
     const token = ++this.loadToken;
 
-    this.subscriptions.add(this.languageService.currentLanguage$.pipe(take(1), switchMap((language) => {
-          this.languageCode = language;
+    this.subscriptions.add(this.languageService.currentLanguage$.pipe(take(1), switchMap(() => {
           if (categoryCode.includes('all')) {
             return this.categoryService.getAllImages(this.currentPage, this.pageSize);
           }
@@ -172,7 +186,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
             return;
           }
 
-          this.totalCount = 0;
+          this.loadError = true;
           this.endOfList = true;
           this.loading = false;
         }
@@ -188,6 +202,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   loadMore() {
     if (this.categoryCode && !this.loading && !this.endOfList) {
+      this.loadPosts(this.categoryCode);
+    }
+  }
+
+  retry() {
+    if (this.categoryCode) {
       this.loadPosts(this.categoryCode);
     }
   }

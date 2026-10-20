@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "title": "Astrophoto — archiwum głębokiego nieba",
+    "description": "Archiwum astrofotografii głębokiego nieba: galaktyki, mgławice i nocne niebo."
+  },
+  "app": {
+    "skipToContent": "Przejdź do treści",
+    "homeAriaLabel": "Astrophoto — strona główna",
+    "footerNote": "© {{year}} Astrophoto — archiwum głębokiego nieba",
+    "backToTop": "Na górę"
+  },
+  "header": {
+    "tagline": "Dziennik nieba",
+    "primaryNav": "Nawigacja główna",
+    "language": "Język",
+    "openNav": "Otwórz nawigację",
+    "closeNav": "Zamknij nawigację"
+  },
+  "main": {
+    "heroCaption": "Kosmos widziany z Ziemi",
+    "heroSubjects": {
+      "nebulae": "Mgławice",
+      "galaxies": "Galaktyki",
+      "nightscapes": "Nocne krajobrazy"
+    },
+    "browse": "Przeglądaj zdjęcia",
+    "latest": "Ostatnie zdjęcia",
+    "loading": "Wczytywanie strony",
+    "errorTitle": "Nie udało się wczytać strony",
+    "errorCopy": "Sprawdź połączenie i spróbuj ponownie.",
+    "retry": "Spróbuj ponownie",
+    "recentError": "Nie udało się wczytać ostatnich zdjęć."
+  },
+  "category": {
+    "all": "Wszystkie zdjęcia",
+    "loadMore": "Załaduj więcej",
+    "end": "Koniec kolekcji",
+    "empty": "Ta kolekcja jest jeszcze pusta. Wróć wkrótce.",
+    "loading": "Wczytywanie zdjęć",
+    "error": "Nie udało się wczytać kolekcji.",
+    "retry": "Spróbuj ponownie"
+  },
+  "image": {
+    "back": "Wróć do kolekcji",
+    "zoomHint": "Kliknij, aby powiększyć",
+    "more": "Więcej zdjęć",
+    "descriptionFallback": "Brak dodatkowego opisu dla tego zdjęcia.",
+    "notFoundTitle": "Nie znaleziono zdjęcia",
+    "notFoundCopy": "To zdjęcie mogło zostać ukryte albo adres jest nieaktualny.",
+    "browseAll": "Przeglądaj wszystkie zdjęcia",
+    "errorTitle": "Nie udało się wczytać zdjęcia",
+    "errorCopy": "Sprawdź połączenie i spróbuj ponownie.",
+    "retry": "Spróbuj ponownie",
+    "loading": "Wczytywanie zdjęcia",
+    "object": "Obiekt",
+    "captured": "Data",
+    "collection": "Kolekcja",
+    "openFrame": "Otwórz zdjęcie {{index}} / {{total}}"
+  },
+  "units": {
+    "frames": {
+      "one": "zdjęcie",
+      "few": "zdjęcia",
+      "many": "zdjęć"
+    }
+  }
+}

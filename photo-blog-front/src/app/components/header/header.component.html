@@ -4,7 +4,7 @@
       <img class="brand__mark" src="assets/shared/telescope-svgrepo-com.svg" alt="">
       <span class="brand__copy">
         <span class="brand__name">Astrophoto</span>
-        <span class="brand__tagline">{{ brandTagline }}</span>
+        <span class="brand__tagline">{{ 'header.tagline' | translate }}</span>
       </span>
     </a>
 
@@ -14,14 +14,14 @@
       class="mobile-nav-toggle"
       (click)="mobileToggle()"
       aria-controls="primary-navigation"
-      aria-expanded="false"
-      aria-label="Toggle navigation">
+      [attr.aria-expanded]="mobileNavOpen"
+      [attr.aria-label]="(mobileNavOpen ? 'header.closeNav' : 'header.openNav') | translate">
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
     </button>
 
-    <nav #nav id="primary-navigation" data-visible="false" class="primary-navigation" aria-label="Primary">
+    <nav #nav id="primary-navigation" data-visible="false" class="primary-navigation" [attr.aria-label]="'header.primaryNav' | translate">
       <ul class="nav-list">
         <ng-container *ngIf="categories$ | async as categories">
           <ng-container *ngFor="let category of categories.data">
@@ -29,6 +29,7 @@
               <a
                 [routerLink]="['/categories', category.code]"
                 [class.active]="isRouterLinkActive(category)"
+                [attr.aria-current]="isRouterLinkActive(category) ? 'page' : null"
                 (click)="closeMobileNav()">
                 {{ category.name }}
               </a>
@@ -52,6 +53,7 @@
                   mat-menu-item
                   class="subcategory"
                   [class.active]="isRouterLinkActive(subCategory)"
+                  [attr.aria-current]="isRouterLinkActive(subCategory) ? 'page' : null"
                   [routerLink]="['/categories', subCategory.code]"
                   (click)="closeMobileNav()">
                   {{ subCategory.name }}
@@ -60,9 +62,15 @@
             </li>
           </ng-container>
         </ng-container>
+
+        <li *ngIf="navFallback">
+          <a [routerLink]="['/categories', 'all']" (click)="closeMobileNav()">
+            {{ 'category.all' | translate }}
+          </a>
+        </li>
       </ul>
 
-      <div class="language-selector" role="group" aria-label="Language">
+      <div class="language-selector" role="group" [attr.aria-label]="'header.language' | translate">
         <button
           type="button"
           [class.active]="isLanguageActive('en')"

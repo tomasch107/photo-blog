@@ -1,10 +1,12 @@
-<main class="gallery-page" id="main" tabindex="-1">
+<main class="gallery-page" id="main" tabindex="-1" [attr.aria-busy]="loading">
+  <span class="sr-only" role="status">{{ statusKey | translate }}</span>
+
   <a
     class="plate gallery-cover"
     *ngIf="coverPost as newest"
     [routerLink]="['/images', newest.slug]">
     <span class="plate__frame gallery-cover__frame">
-      <img [src]="getCoverImage(newest)" [alt]="newest.title">
+      <img *ngIf="getCoverImage(newest)" [src]="getCoverImage(newest)" [alt]="newest.title">
     </span>
     <span class="plate__caption">
       <span class="plate__title">{{ newest.title }}</span>
@@ -12,14 +14,20 @@
     </span>
   </a>
 
-  <header class="gallery-header">
+  <span
+    class="gallery-cover-skeleton skeleton-plate"
+    *ngIf="showSkeleton"
+    aria-hidden="true"></span>
+
+  <header class="gallery-header" *ngIf="categoryName || showSkeleton || totalCount">
     <h1 class="display-title gallery-title" *ngIf="categoryName">{{ categoryName }}</h1>
+    <span class="skeleton-heading" *ngIf="!categoryName && showSkeleton" aria-hidden="true"></span>
     <span class="data-label gallery-count" *ngIf="totalCount">
-      {{ totalCount }} {{ getFramesLabel(totalCount) }}
+      {{ totalCount }} {{ getFramesCountKey(totalCount) | translate }}
     </span>
   </header>
 
-  <div class="gallery-skeleton" *ngIf="loading && posts.length === 0" aria-hidden="true">
+  <div class="gallery-skeleton" *ngIf="showSkeleton" aria-hidden="true">
     <span class="skeleton-plate" *ngFor="let item of skeletonItems"></span>
   </div>
 
@@ -34,7 +42,7 @@
     <li *ngFor="let post of gridPosts">
       <a class="plate" [routerLink]="['/images', post.slug]">
         <span class="plate__frame">
-          <img [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
+          <img *ngIf="getPostImage(post)" [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
         </span>
         <span class="plate__caption">
           <span class="plate__title">{{ post.title }}</span>
@@ -44,22 +52,34 @@
     </li>
   </ul>
 
-  <div class="gallery-empty" *ngIf="!loading && !posts.length">
-    <p class="gallery-empty__copy">{{ emptyLabel }}</p>
+  <div class="gallery-empty" *ngIf="!loading && !loadError && !posts.length">
+    <p class="gallery-empty__copy">{{ 'category.empty' | translate }}</p>
+  </div>
+
+  <div class="gallery-empty gallery-empty--error" *ngIf="!loading && loadError && !posts.length">
+    <p class="gallery-empty__copy">{{ 'category.error' | translate }}</p>
+    <button class="button" type="button" (click)="retry()">{{ 'category.retry' | translate }}</button>
   </div>
 
   <div class="gallery-footer" *ngIf="posts.length">
-    <button
-      class="button gallery-load-more"
-      type="button"
-      *ngIf="!endOfList"
-      (click)="loadMore()"
-      [disabled]="loading">
-      {{ loadMoreLabel }}
-      <span class="button__icon" aria-hidden="true">
-        <svg viewBox="0 0 16 16"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg>
-      </span>
-    </button>
-    <span class="gallery-end data-label" *ngIf="endOfList">{{ endLabel }}</span>
+    <ng-container *ngIf="loadError">
+      <span class="gallery-end data-label gallery-end--error">{{ 'category.error' | translate }}</span>
+      <button class="button" type="button" (click)="retry()">{{ 'category.retry' | translate }}</button>
+    </ng-container>
+
+    <ng-container *ngIf="!loadError">
+      <button
+        class="button gallery-load-more"
+        type="button"
+        *ngIf="!endOfList"
+        (click)="loadMore()"
+        [disabled]="loading">
+        {{ 'category.loadMore' | translate }}
+        <span class="button__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg>
+        </span>
+      </button>
+      <span class="gallery-end data-label" *ngIf="endOfList">{{ 'category.end' | translate }}</span>
+    </ng-container>
   </div>
 </main>

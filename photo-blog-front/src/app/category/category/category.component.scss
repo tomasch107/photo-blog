@@ -59,6 +59,21 @@
 .skeleton-plate:nth-child(5) { animation-delay: 720ms; }
 .skeleton-plate:nth-child(6) { animation-delay: 900ms; }
 
+/* Loading mirrors the finished page: cover plate, header, contact sheet. */
+.gallery-cover-skeleton {
+  aspect-ratio: 21 / 9;
+  margin: 0 0 clamp(2rem, 5vw, 3.5rem);
+}
+
+.skeleton-heading {
+  display: block;
+  width: min(100%, 18rem);
+  height: clamp(2.4rem, 6vw, 3.7rem);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-line);
+  animation: breathe 2.6s ease-in-out infinite;
+}
+
 .gallery-empty {
   display: flex;
   align-items: center;
@@ -75,10 +90,22 @@
   color: var(--clr-muted-strong);
 }
 
+.gallery-empty--error {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.gallery-empty--error .gallery-empty__copy {
+  color: var(--clr-text);
+}
+
 .gallery-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 1rem 1.5rem;
   min-height: 5rem;
   margin-top: clamp(2.5rem, 6vw, 4rem);
 }
@@ -96,8 +123,13 @@
   letter-spacing: 0.06em;
 }
 
+.gallery-end--error {
+  color: var(--clr-accent);
+}
+
 @media (max-width: 44em) {
-  .gallery-cover__frame {
+  .gallery-cover__frame,
+  .gallery-cover-skeleton {
     aspect-ratio: 3 / 2;
   }
 

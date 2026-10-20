@@ -163,13 +163,19 @@
   align-items: center;
   justify-content: center;
   gap: 0.3rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   background: transparent;
   border: 1px solid var(--clr-line-strong);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: border-color 180ms ease-out;
+}
+
+.mobile-nav-toggle:hover,
+.mobile-nav-toggle:focus-visible {
+  border-color: var(--clr-text);
 }
 
 .nav-toggle-line {

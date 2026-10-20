@@ -8,6 +8,7 @@ Scope: `photo-blog/photo-blog-front/`. Backend rules live in `photo-blog/AGENTS.
 - TypeScript 4.9 with `strict`, `strictTemplates`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, and `noImplicitReturns`.
 - SCSS with Angular Material 15 (dark gray theme, prebuilt Indigo/Pink CSS plus custom theme).
 - RxJS 7, `ngx-infinite-scroll`, `ngx-markdown`, `photoswipe` 5, Font Awesome 6.
+- UI translations: `@ngx-translate/core` 14 with `@ngx-translate/http-loader` 7; JSON files live in `src/assets/i18n/`.
 - Tests: Karma + Jasmine. No ESLint and no e2e project are configured.
 
 ## Commands
@@ -44,6 +45,7 @@ src/
   environments/
     environment.ts            Production environment (used by `ng build`)
     environment.development.ts Development environment (used by `ng serve`)
+  assets/i18n/                UI translation files (`en.json`, `pl.json`)
   styles.scss                 Global resets, CSS variables, utilities, Material theme
   styles/mixins.scss          Responsive breakpoint mixins
 ```
@@ -68,10 +70,13 @@ Feature modules are lazy-loaded in `app-routing.module.ts`:
 
 ### Language and i18n
 
-- `LanguageService.currentLanguage$` is a `BehaviorSubject` holding the active ISO code. It is initialized from `localStorage['lang']`, then the browser language, then `'en'`.
+- `LanguageService.currentLanguage$` is a `BehaviorSubject` holding the active ISO code. It is initialized from `localStorage['lang']`, then the browser language, then `'en'`; unsupported values are normalized to `'en'`. Only `en` and `pl` are supported.
 - `LanguageInterceptor` adds `locale=<current language>` to every outgoing HTTP request. Do not append `locale` manually.
+- UI chrome strings live in `src/assets/i18n/en.json` and `src/assets/i18n/pl.json`, loaded by `@ngx-translate/core` (`TranslateModule.forRoot` in `app.module.ts`). Use the `translate` pipe in templates (`{{ 'main.browse' | translate }}`), and interpolate parameters with `translate: {year: currentYear}`.
+- Add every new UI string to **both** language files. Keep the JSON key structure stable; `AppComponent` uses `meta.title` / `meta.description` to update the document title and description.
+- Pluralized labels use the `units.frames.one|few|many` keys. `getFramesCountKey()` in the feature components selects the key from the count; the `translate` pipe renders it, so language switches update without extra subscriptions.
 - Components that display localized content should react to language changes, typically by composing `languageService.currentLanguage$.pipe(switchMap(...))`. Follow the pattern in `CategoryComponent` or `MainPageComponent`.
-- UI chrome strings are hardcoded (for example the "Load more" label in `CategoryComponent`). There is no Angular i18n (`@angular/localize`) setup. Do not introduce Angular i18n unless the task explicitly asks for it; Strapi i18n handles content only.
+- Strapi i18n handles **content** translations; ngx-translate handles **UI chrome**. Keep those concerns separate.
 
 ## Component and style conventions
 

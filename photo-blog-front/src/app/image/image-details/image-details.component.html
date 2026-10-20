@@ -1,8 +1,9 @@
-<main class="detail-page" id="main" tabindex="-1" *ngIf="posts$ | async as posts; else detailLoading">
-    <ng-container *ngIf="posts.data[0] as post">
+<ng-container *ngIf="posts$ | async as posts; else detailUnavailable">
+    <main class="detail-page" id="main" tabindex="-1">
+    <ng-container *ngIf="posts.data[0] as post; else detailNotFound">
         <a class="text-link detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
-            {{ backLabel }}
+            {{ 'image.back' | translate }}
         </a>
 
         <header class="detail-header">
@@ -12,13 +13,13 @@
                 <span *ngIf="post.date">
                     <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
                 </span>
-                <span>{{ post.images.length }} {{ getFramesLabel(post.images.length) }}</span>
+                <span *ngIf="post.images.length">{{ post.images.length }} {{ getFramesCountKey(post.images.length) | translate }}</span>
                 <span *ngIf="post.category">{{ post.category.name }}</span>
             </p>
         </header>
 
-        <figure class="plate detail-plate">
-            <button type="button" class="plate__frame detail-plate__frame" (click)="openImage(post.images)" [attr.aria-label]="zoomHint">
+        <figure class="plate detail-plate" *ngIf="post.images.length">
+            <button type="button" class="plate__frame detail-plate__frame" (click)="openImage(post.images)" [attr.aria-label]="'image.zoomHint' | translate">
                 <img
                   *ngIf="post.images[0]"
                   [src]="getImageUrl(post.images[0])"
@@ -27,7 +28,7 @@
             <figcaption class="plate__caption">
                 <span class="plate__meta">{{ formatIndex(1) }} / {{ formatIndex(post.images.length) }}</span>
                 <span class="plate__action">
-                    {{ zoomHint }}
+                    {{ 'image.zoomHint' | translate }}
                     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
                 </span>
             </figcaption>
@@ -38,22 +39,22 @@
                 <markdown class="prose" *ngIf="post.description; else noDescription" [data]="post.description">
                 </markdown>
                 <ng-template #noDescription>
-                    <p class="prose detail-empty-copy">{{ descriptionFallback }}</p>
+                    <p class="prose detail-empty-copy">{{ 'image.descriptionFallback' | translate }}</p>
                 </ng-template>
             </article>
 
             <aside class="detail-aside">
                 <dl class="detail-facts">
                     <div class="detail-fact">
-                        <dt class="data-label">{{ objectLabel }}</dt>
+                        <dt class="data-label">{{ 'image.object' | translate }}</dt>
                         <dd class="detail-fact__value">{{ post.title }}</dd>
                     </div>
                     <div class="detail-fact" *ngIf="post.date">
-                        <dt class="data-label">{{ capturedLabel }}</dt>
+                        <dt class="data-label">{{ 'image.captured' | translate }}</dt>
                         <dd class="detail-fact__value">{{ post.date | date:'yyyy.MM.dd' }}</dd>
                     </div>
                     <div class="detail-fact" *ngIf="post.category">
-                        <dt class="data-label">{{ collectionLabel }}</dt>
+                        <dt class="data-label">{{ 'image.collection' | translate }}</dt>
                         <dd class="detail-fact__value">{{ post.category.name }}</dd>
                     </div>
                 </dl>
@@ -62,7 +63,7 @@
 
         <section class="detail-gallery" *ngIf="post.images.length > 1">
             <header class="detail-gallery__header">
-                <h2 class="detail-gallery__title">{{ moreFramesLabel }}</h2>
+                <h2 class="detail-gallery__title">{{ 'image.more' | translate }}</h2>
                 <span class="data-label">{{ post.images.length - 1 }}</span>
             </header>
 
@@ -72,7 +73,7 @@
                       type="button"
                       class="plate detail-thumb"
                       (click)="openImage(post.images, i + 1)"
-                      [attr.aria-label]="'Open frame ' + formatIndex(i + 2) + ' / ' + formatIndex(post.images.length)">
+                      [attr.aria-label]="'image.openFrame' | translate: {index: formatIndex(i + 2), total: formatIndex(post.images.length)}">
                         <span class="plate__frame" [style.aspectRatio]="getAspectRatio(image)">
                             <img [src]="getImageUrl(image, 'medium')" [alt]="post.title + ' — ' + (i + 2)" loading="lazy">
                         </span>
@@ -86,9 +87,46 @@
 
         <app-photoswipe #photoSwipe></app-photoswipe>
     </ng-container>
-</main>
+
+    <ng-template #detailNotFound>
+        <div class="detail-fallback">
+            <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+                {{ 'image.back' | translate }}
+            </a>
+
+            <h1 class="display-title detail-title">{{ 'image.notFoundTitle' | translate }}</h1>
+            <p class="detail-fallback__copy">{{ 'image.notFoundCopy' | translate }}</p>
+
+            <a class="button" [routerLink]="['/categories', 'all']">
+                {{ 'image.browseAll' | translate }}
+                <span class="button__icon" aria-hidden="true">
+                    <svg viewBox="0 0 16 16"><path d="M3 13 13 3M6 3h7v7"/></svg>
+                </span>
+            </a>
+        </div>
+    </ng-template>
+    </main>
+</ng-container>
+
+<ng-template #detailUnavailable>
+    <main class="detail-page" id="main" tabindex="-1" *ngIf="loadFailed; else detailLoading">
+        <div class="detail-fallback">
+            <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+                {{ 'image.back' | translate }}
+            </a>
+
+            <h1 class="display-title detail-title">{{ 'image.errorTitle' | translate }}</h1>
+            <p class="detail-fallback__copy">{{ 'image.errorCopy' | translate }}</p>
+
+            <button class="button" type="button" (click)="retry()">{{ 'image.retry' | translate }}</button>
+        </div>
+    </main>
+</ng-template>
 
 <ng-template #detailLoading>
+    <span class="sr-only" role="status">{{ 'image.loading' | translate }}</span>
     <main class="detail-page detail-page--loading" aria-hidden="true">
         <div class="skeleton skeleton--back"></div>
         <div class="skeleton skeleton--title"></div>

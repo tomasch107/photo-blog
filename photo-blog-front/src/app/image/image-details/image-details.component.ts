@@ -1,16 +1,12 @@
-import {Component, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {CategoryService} from "../../services/category.service";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {DOCUMENT} from "@angular/common";
 import {environment} from "../../../environments/environment";
-import {Observable, switchMap} from "rxjs";
+import {catchError, Observable, of, switchMap} from "rxjs";
 import {Image, Post} from "../../model/image.model";
 import {ApiPaginatedResponse} from "../../model/category.model";
 import {ImageService} from "../service/image.service";
-import {MarkdownService} from "ngx-markdown";
 import {PhotoswipeComponent} from "../photoswipe/photoswipe.component";
 import {LanguageService} from "../../services/language.service";
-import {RenderingService} from "../../services/rendering.service";
 
 @Component({
   selector: 'app-image-details',
@@ -20,73 +16,30 @@ import {RenderingService} from "../../services/rendering.service";
 export class ImageDetailsComponent implements OnInit {
   @ViewChild('photoSwipe') photoSwipe: PhotoswipeComponent | undefined;
 
-  posts$: Observable<ApiPaginatedResponse<Post>> | undefined;
-  languageCode = 'en';
+  posts$: Observable<ApiPaginatedResponse<Post> | null> | undefined;
+  loadFailed = false;
+  private currentSlug = '';
+
   constructor(
     private imageService: ImageService,
     private route: ActivatedRoute,
-    private renderer2: Renderer2,
-    @Inject(DOCUMENT) private document: Document,
-    private markdownService: MarkdownService,
-    private languageService: LanguageService,
-    private renderingService: RenderingService
+    private languageService: LanguageService
   ) {
   }
 
-
-  baseUrl = environment.baseUrl;
-
-  get backLabel(): string {
-    return this.languageCode === 'pl' ? 'Wróć do kolekcji' : 'Back to collection';
-  }
-
-  get zoomHint(): string {
-    return this.languageCode === 'pl' ? 'Kliknij, aby powiększyć' : 'Click to open full resolution';
-  }
-
-  get moreFramesLabel(): string {
-    return this.languageCode === 'pl' ? 'Więcej kadrów' : 'More frames';
-  }
-
-  get descriptionFallback(): string {
-    return this.languageCode === 'pl'
-      ? 'Brak dodatkowego opisu dla tego kadru.'
-      : 'No additional observing notes for this frame.';
-  }
-
-  get objectLabel(): string {
-    return this.languageCode === 'pl' ? 'Obiekt' : 'Object';
-  }
-
-  get catalogLabel(): string {
-    return this.languageCode === 'pl' ? 'Katalog' : 'Catalog';
-  }
-
-  get capturedLabel(): string {
-    return this.languageCode === 'pl' ? 'Data' : 'Captured';
-  }
-
-  get collectionLabel(): string {
-    return this.languageCode === 'pl' ? 'Kolekcja' : 'Collection';
-  }
-
-  getFramesLabel(count: number): string {
-    if (this.languageCode !== 'pl') {
-      return count === 1 ? 'frame' : 'frames';
-    }
-
+  getFramesCountKey(count: number): string {
     const lastDigit = count % 10;
     const lastTwoDigits = count % 100;
 
     if (count === 1) {
-      return 'kadr';
+      return 'units.frames.one';
     }
 
     if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
-      return 'kadry';
+      return 'units.frames.few';
     }
 
-    return 'kadrów';
+    return 'units.frames.many';
   }
 
   getImageUrl(image: Image | undefined, format = 'large'): string {
@@ -113,12 +66,31 @@ export class ImageDetailsComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       const imageId = params.get('imageId');
       if (imageId) {
-        this.posts$ = this.languageService.currentLanguage$.pipe(switchMap(() => {
-          this.languageCode = this.languageService.currentLanguage$.value;
-          return this.imageService.getImagesForSlug(imageId);
-        }));
+        this.currentSlug = imageId;
+        this.loadPost();
       }
     })
+  }
+
+  retry() {
+    if (this.currentSlug) {
+      this.loadPost();
+    }
+  }
+
+  private loadPost() {
+    this.posts$ = this.languageService.currentLanguage$.pipe(
+      switchMap(() => {
+        this.loadFailed = false;
+
+        return this.imageService.getImagesForSlug(this.currentSlug).pipe(
+          catchError(() => {
+            this.loadFailed = true;
+            return of(null);
+          })
+        );
+      })
+    );
   }
 
   openImage(images: Image[], index = 0) {

@@ -1,11 +1,8 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 
-// Import PhotoSwipe
-import PhotoSwipe, {DataSource} from 'photoswipe';
+import type {DataSourceArray} from 'photoswipe';
 import {Image} from "../../model/image.model";
 import {environment} from "../../../environments/environment";
-import {ActivatedRoute} from "@angular/router";
-import {Subscription} from "rxjs";
 import {ImageService} from "../service/image.service";
 
 @Component({
@@ -28,15 +25,14 @@ export class PhotoswipeComponent {
     // Build gallery images array
     images = images || this.images;
 
-    // @ts-ignore
-    const newimages: DataSource = images.map((image) => {
+    const galleryItems: DataSourceArray = images.map((image) => {
       return {
-        src:   environment.baseUrl + image.url,
-        width: image.width,
-        height: image.height
+        src: environment.baseUrl + image.url,
+        width: Number(image.width),
+        height: Number(image.height)
       }
-    })
+    });
 
-    this.imageService.openGallery(this.photoSwipe?.nativeElement, newimages, index);
+    this.imageService.openGallery(this.photoSwipe?.nativeElement, galleryItems, index);
   }
 }

@@ -34,7 +34,13 @@
 
 .detail-plate {
   align-items: center;
-  margin: 0 0 clamp(2.5rem, 6vh, 4.5rem);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto clamp(2.5rem, 6vh, 4.5rem);
+}
+
+.detail-plate .plate__caption {
+  align-self: stretch;
 }
 
 .detail-plate__frame {
@@ -65,6 +71,23 @@
 .detail-empty-copy {
   color: var(--clr-muted);
   font-style: italic;
+}
+
+.detail-fallback {
+  max-width: 46ch;
+  min-height: 42vh;
+  padding-top: clamp(0.5rem, 2vh, 1.5rem);
+}
+
+.detail-fallback__copy {
+  margin-top: 1rem;
+  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--clr-muted-strong);
+}
+
+.detail-fallback .button {
+  margin-top: clamp(1.5rem, 4vh, 2rem);
 }
 
 .detail-facts {
@@ -166,6 +189,7 @@
   }
 
   .detail-plate {
+    width: auto;
     align-items: stretch;
   }
 

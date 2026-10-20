@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "title": "Astrophoto — Deep Sky Archive",
+    "description": "A deep sky astrophotography archive: galaxies, nebulae, and the night sky."
+  },
+  "app": {
+    "skipToContent": "Skip to content",
+    "homeAriaLabel": "Astrophoto home",
+    "footerNote": "© {{year}} Astrophoto — deep sky archive",
+    "backToTop": "Back to top"
+  },
+  "header": {
+    "tagline": "Deep sky journal",
+    "primaryNav": "Primary",
+    "language": "Language",
+    "openNav": "Open navigation",
+    "closeNav": "Close navigation"
+  },
+  "main": {
+    "heroCaption": "The cosmos, seen from Earth",
+    "heroSubjects": {
+      "nebulae": "Nebulae",
+      "galaxies": "Galaxies",
+      "nightscapes": "Nightscapes"
+    },
+    "browse": "Browse the frames",
+    "latest": "Latest frames",
+    "loading": "Loading page",
+    "errorTitle": "Couldn't load this page",
+    "errorCopy": "Check your connection and try again.",
+    "retry": "Try again",
+    "recentError": "Couldn't load the latest frames."
+  },
+  "category": {
+    "all": "All captures",
+    "loadMore": "Load more",
+    "end": "End of collection",
+    "empty": "This collection is still empty. Check back soon.",
+    "loading": "Loading frames",
+    "error": "Couldn't load this collection.",
+    "retry": "Try again"
+  },
+  "image": {
+    "back": "Back to collection",
+    "zoomHint": "Click to open full resolution",
+    "more": "More frames",
+    "descriptionFallback": "No additional observing notes for this frame.",
+    "notFoundTitle": "Frame not found",
+    "notFoundCopy": "This frame may be unpublished, or the link is out of date.",
+    "browseAll": "Browse all frames",
+    "errorTitle": "Couldn't load this frame",
+    "errorCopy": "Check your connection and try again.",
+    "retry": "Try again",
+    "loading": "Loading frame",
+    "object": "Object",
+    "captured": "Captured",
+    "collection": "Collection",
+    "openFrame": "Open frame {{index}} / {{total}}"
+  },
+  "units": {
+    "frames": {
+      "one": "frame",
+      "few": "frames",
+      "many": "frames"
+    }
+  }
+}

@@ -1,63 +1,87 @@
-<main class="masthead" id="main" tabindex="-1" *ngIf="(page$ | async)?.data as pages; else heroLoading">
-  <ng-container *ngIf="pages[0] as page">
-    <div class="masthead__inner">
-      <div class="masthead__copy">
-        <h1 class="display-title masthead__title">{{ page.pageData?.title }}</h1>
+<ng-container *ngIf="page$ | async as pageResponse; else pageUnavailable">
+  <main class="masthead" id="main" tabindex="-1">
+    <ng-container *ngIf="pageResponse.data[0] as page">
+      <div class="masthead__inner">
+        <div class="masthead__copy">
+          <h1 class="display-title masthead__title">{{ page.pageData?.title }}</h1>
 
-        <p class="masthead__standfirst">{{ heroCaption }}</p>
+          <p class="masthead__standfirst">{{ 'main.heroCaption' | translate }}</p>
 
-        <div class="masthead__actions">
-          <a [routerLink]="['/categories', 'all']" class="button button--solid">
-            <span>{{ page.pageData?.buttonText }}</span>
-            <span class="button__icon" aria-hidden="true">
-              <svg viewBox="0 0 16 16"><path d="M3 13 13 3M6 3h7v7"/></svg>
+          <div class="masthead__actions">
+            <a [routerLink]="['/categories', 'all']" class="button button--solid">
+              <span>{{ page.pageData?.buttonText }}</span>
+              <span class="button__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16"><path d="M3 13 13 3M6 3h7v7"/></svg>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <figure class="plate masthead__plate">
+          <span class="plate__frame" [style.aspectRatio]="getAspectRatio(page.background)">
+            <img *ngIf="getCoverUrl(page)" [src]="getCoverUrl(page)" [alt]="page.pageData?.title">
+          </span>
+        </figure>
+      </div>
+
+      <div class="masthead__index">
+        <div class="masthead__index-row">
+          <span *ngFor="let subjectKey of heroSubjectKeys" class="data-label masthead__subject">{{ subjectKey | translate }}</span>
+        </div>
+        <a class="text-link masthead__scroll" [routerLink]="['/categories', 'all']">
+          {{ 'main.browse' | translate }}
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l5 5 5-5M8 8.5v6"/></svg>
+        </a>
+      </div>
+    </ng-container>
+
+    <section class="recent" *ngIf="!recentLoaded || recentPosts.length || recentError">
+      <header class="recent__header">
+        <h2 class="display-title recent__title">{{ 'main.latest' | translate }}</h2>
+        <span class="data-label" *ngIf="totalFrames">{{ totalFrames }} {{ getFramesCountKey(totalFrames) | translate }}</span>
+      </header>
+
+      <div class="recent__state" *ngIf="recentError">
+        <p class="recent__state-copy">{{ 'main.recentError' | translate }}</p>
+        <button class="button" type="button" (click)="retryRecent()">{{ 'main.retry' | translate }}</button>
+      </div>
+
+      <ul class="recent__grid" *ngIf="recentLoaded && !recentError; else recentSkeleton">
+        <li *ngFor="let post of recentPosts">
+          <a class="plate" [routerLink]="['/images', post.slug]">
+            <span class="plate__frame">
+              <img *ngIf="getPostImage(post)" [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
+            </span>
+            <span class="plate__caption">
+              <span class="plate__title">{{ post.title }}</span>
+              <span class="plate__meta">{{ post.date | date:'yyyy' }}</span>
             </span>
           </a>
+        </li>
+      </ul>
+
+      <ng-template #recentSkeleton>
+        <div class="recent__grid" aria-hidden="true" *ngIf="!recentError">
+          <span class="skeleton-block skeleton-block--plate" *ngFor="let item of skeletonItems"></span>
         </div>
-      </div>
+      </ng-template>
+    </section>
+  </main>
+</ng-container>
 
-      <figure class="plate masthead__plate">
-        <span class="plate__frame" [style.aspectRatio]="getAspectRatio(page.background)">
-          <img *ngIf="getCoverUrl(page)" [src]="getCoverUrl(page)" [alt]="page.pageData?.title">
-        </span>
-      </figure>
+<ng-template #pageUnavailable>
+  <main class="masthead" id="main" tabindex="-1" *ngIf="pageLoadFailed; else heroLoading">
+    <div class="masthead__fallback" role="status">
+      <h1 class="display-title masthead__fallback-title">{{ 'main.errorTitle' | translate }}</h1>
+      <p class="masthead__fallback-copy">{{ 'main.errorCopy' | translate }}</p>
+      <button class="button" type="button" (click)="retryPage()">{{ 'main.retry' | translate }}</button>
     </div>
-
-    <div class="masthead__index">
-      <div class="masthead__index-row">
-        <span *ngFor="let subject of heroMeta" class="data-label masthead__subject">{{ subject }}</span>
-      </div>
-      <a class="text-link masthead__scroll" [routerLink]="['/categories', 'all']">
-        {{ scrollLabel }}
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l5 5 5-5M8 8.5v6"/></svg>
-      </a>
-    </div>
-  </ng-container>
-
-  <section class="recent" *ngIf="recentPosts.length">
-    <header class="recent__header">
-      <h2 class="display-title recent__title">{{ recentLabel }}</h2>
-      <span class="data-label" *ngIf="totalFrames">{{ totalFrames }} {{ getFramesLabel(totalFrames) }}</span>
-    </header>
-
-    <ul class="recent__grid">
-      <li *ngFor="let post of recentPosts">
-        <a class="plate" [routerLink]="['/images', post.slug]">
-          <span class="plate__frame">
-            <img *ngIf="getPostImage(post)" [src]="getPostImage(post)" [alt]="post.title" loading="lazy">
-          </span>
-          <span class="plate__caption">
-            <span class="plate__title">{{ post.title }}</span>
-            <span class="plate__meta">{{ post.date | date:'yyyy' }}</span>
-          </span>
-        </a>
-      </li>
-    </ul>
-  </section>
-</main>
+  </main>
+</ng-template>
 
 <ng-template #heroLoading>
-  <main class="masthead masthead--loading" aria-hidden="true">
+  <span class="sr-only" role="status">{{ 'main.loading' | translate }}</span>
+  <main class="masthead masthead--loading" id="main" tabindex="-1" aria-hidden="true">
     <div class="masthead__inner">
       <div class="masthead__copy">
         <span class="skeleton-block skeleton-block--title"></span>

@@ -5,7 +5,7 @@ import {ImageRoutingModule} from "./image-routing.module";
 import {ImageService} from "./service/image.service";
 import {MarkdownModule, MarkdownService} from "ngx-markdown";
 import { PhotoswipeComponent } from './photoswipe/photoswipe.component';
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslatePipe} from "@ngx-translate/core";
 
 
 
@@ -16,10 +16,9 @@ import {TranslateModule} from "@ngx-translate/core";
   ],
   imports: [
     CommonModule,
-    MarkdownModule.forRoot(),
-    ImageRoutingModule,
     MarkdownModule,
-    TranslateModule,
+    ImageRoutingModule,
+    TranslatePipe,
   ],
   providers: [ImageService]
 })

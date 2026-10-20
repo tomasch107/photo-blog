@@ -1,4 +1,4 @@
-import {Component, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
 import {Meta, Title} from "@angular/platform-browser";
@@ -10,7 +10,9 @@ import {LanguageService} from "./services/language.service";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'photo-blog-front';
@@ -30,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private metaService: Meta
   ) {
     this.translate.addLangs(LanguageService.supportedLanguages);
-    this.translate.setDefaultLang('en');
+    this.translate.setFallbackLang('en');
 
     this.subscriptions.add(
       this.languageService.currentLanguage$.subscribe((language) => {

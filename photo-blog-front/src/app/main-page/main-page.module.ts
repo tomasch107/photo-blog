@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainPageComponent } from './main-page/main-page.component';
 import {MainPageRoutingModule} from "./main-page-routing.module";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @NgModule({
   declarations: [
@@ -11,7 +11,7 @@ import {TranslateModule} from "@ngx-translate/core";
   imports: [
     CommonModule,
     MainPageRoutingModule,
-    TranslateModule
+    TranslatePipe
   ]
 })
 export class MainPageModule { }

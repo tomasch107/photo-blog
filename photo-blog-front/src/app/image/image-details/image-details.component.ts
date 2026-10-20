@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {environment} from "../../../environments/environment";
 import {catchError, Observable, of, switchMap} from "rxjs";
@@ -11,7 +11,9 @@ import {LanguageService} from "../../services/language.service";
 @Component({
   selector: 'app-image-details',
   templateUrl: './image-details.component.html',
-  styleUrls: ['./image-details.component.scss']
+  styleUrls: ['./image-details.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ImageDetailsComponent implements OnInit {
   @ViewChild('photoSwipe') photoSwipe: PhotoswipeComponent | undefined;

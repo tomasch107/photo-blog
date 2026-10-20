@@ -4,12 +4,15 @@ Scope: `photo-blog/photo-blog-front/`. Backend rules live in `photo-blog/AGENTS.
 
 ## Stack
 
-- **Angular 15.2** with NgModules (not standalone components).
-- TypeScript 4.9 with `strict`, `strictTemplates`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, and `noImplicitReturns`.
-- SCSS with Angular Material 15 (dark gray theme, prebuilt Indigo/Pink CSS plus custom theme).
-- RxJS 7, `ngx-infinite-scroll`, `ngx-markdown`, `photoswipe` 5, Font Awesome 6.
-- UI translations: `@ngx-translate/core` 14 with `@ngx-translate/http-loader` 7; JSON files live in `src/assets/i18n/`.
-- Tests: Karma + Jasmine. No ESLint and no e2e project are configured.
+- **Angular 22.2** with NgModules (not standalone components).
+- TypeScript 6.0 (`>=6.0 <6.1`), which Angular 22 requires.
+- **Node 24 LTS**, installed with [fnm](https://github.com/Schniz/fnm). Angular 22 supports `^22.22.3 || ^24.15.0 || >=26.0.0`; Node 18/20 no longer work.
+- SCSS with Angular Material 22. The theme is declared with the `mat.theme()` API in `src/styles.scss`; the old prebuilt Indigo/Pink CSS is gone.
+- RxJS 7.8, `ngx-infinite-scroll` 22, `ngx-markdown` 22, `photoswipe` 5, Font Awesome 7.
+- UI translations: `@ngx-translate/core` 18 with `@ngx-translate/http-loader` 18; JSON files live in `src/assets/i18n/`.
+- Tests: Karma + Jasmine (`jasmine-core` 6.3) through the `@angular/build:unit-test` builder. No ESLint and no e2e project are configured.
+
+Angular 22 is **zoneless by default**. This app keeps the previous zone-based behavior by calling `provideZoneChangeDetection({eventCoalescing: true})` in `app.module.ts`, so `zone.js` stays in the build polyfills. Components use `ChangeDetectionStrategy.Eager`; do not switch a component to `OnPush` unless you also verify its async data still renders.
 
 ## Commands
 
@@ -19,12 +22,12 @@ Run from `photo-blog/photo-blog-front/`:
 | --- | --- |
 | Install | `npm install` |
 | Dev server (`http://localhost:4200`) | `npm start` |
-| Production build | `npx ng build` |
+| Production build | `npm run build` or `npx ng build` |
 | Watch build | `npm run watch` |
 | Unit tests | `npx ng test --watch=false --browsers=ChromeHeadless` |
 | Generate Angular code | `npx ng generate <schematic> ...` (for example `npx ng generate component my-component`) |
 
-`npm run build` is declared as `./node_modules/.bin/ng build`. That POSIX path can fail on Windows; use `npx ng build` when verifying locally.
+The build uses the `@angular/build:application` builder. Production output is written to `dist/photo-blog-front/browser` (the server bundle would live next to it if SSR were enabled).
 
 ## Application structure
 
@@ -41,6 +44,7 @@ src/
       service/image.service.ts
     model/                    API and domain interfaces
     services/                 HTTP, URL, language, rendering services
+      language.interceptor.ts Functional interceptor that adds `locale`
     config/url.config.ts      Strapi endpoint aliases and query strings
   environments/
     environment.ts            Production environment (used by `ng build`)
@@ -71,8 +75,9 @@ Feature modules are lazy-loaded in `app-routing.module.ts`:
 ### Language and i18n
 
 - `LanguageService.currentLanguage$` is a `BehaviorSubject` holding the active ISO code. It is initialized from `localStorage['lang']`, then the browser language, then `'en'`; unsupported values are normalized to `'en'`. Only `en` and `pl` are supported.
-- `LanguageInterceptor` adds `locale=<current language>` to every outgoing HTTP request. Do not append `locale` manually.
-- UI chrome strings live in `src/assets/i18n/en.json` and `src/assets/i18n/pl.json`, loaded by `@ngx-translate/core` (`TranslateModule.forRoot` in `app.module.ts`). Use the `translate` pipe in templates (`{{ 'main.browse' | translate }}`), and interpolate parameters with `translate: {year: currentYear}`.
+- `languageInterceptor` (a functional `HttpInterceptorFn`) adds `locale=<current language>` to every outgoing HTTP request. It is registered in `app.module.ts` with `provideHttpClient(withInterceptors([languageInterceptor]))`. Do not use the legacy `HTTP_INTERCEPTORS` token and do not append `locale` manually.
+- UI chrome strings live in `src/assets/i18n/en.json` and `src/assets/i18n/pl.json`, loaded by `@ngx-translate/core` 18. `app.module.ts` configures it with `provideTranslateService(...)` and `provideTranslateHttpLoader(...)`; there is no `TranslateModule` anymore. Import the standalone `TranslatePipe` into the module that renders translations.
+- Use the `translate` pipe in templates (`{{ 'main.browse' | translate }}`), and interpolate parameters with `translate: {year: currentYear}`.
 - Add every new UI string to **both** language files. Keep the JSON key structure stable; `AppComponent` uses `meta.title` / `meta.description` to update the document title and description.
 - Pluralized labels use the `units.frames.one|few|many` keys. `getFramesCountKey()` in the feature components selects the key from the count; the `translate` pipe renders it, so language switches update without extra subscriptions.
 - Components that display localized content should react to language changes, typically by composing `languageService.currentLanguage$.pipe(switchMap(...))`. Follow the pattern in `CategoryComponent` or `MainPageComponent`.
@@ -82,10 +87,11 @@ Feature modules are lazy-loaded in `app-routing.module.ts`:
 
 - Keep the Angular CLI file layout: `name.component.ts`, `.html`, `.scss`, `.spec.ts`; `name.service.ts`; `name.module.ts`; `name-routing.module.ts`.
 - Components use `templateUrl`/`styleUrls` rather than inline templates/styles.
+- Angular 22 generates standalone components by default. This app is NgModule-based, so every new component must set `standalone: false` and be added to the appropriate module's `declarations`.
 - Use constructor injection. Services shared across features use `providedIn: 'root'`; feature-only services are provided by their module (see `ImageService` in `ImageModule`).
 - Manage RxJS subscriptions explicitly. Several existing components store them in a `Subscription` and unsubscribe in `ngOnDestroy`; when touching a component without that pattern, add proper cleanup rather than creating leaks.
 - Use the existing global design tokens (`--clr-*`, `--fs-*`, `--ff-*`) and utility classes from `styles.scss`. Responsive rules should use the mixins in `styles/mixins.scss` where practical.
-- Angular Material 15 uses the MDC-based components. Keep the existing dark theme; do not swap in a different Material theme as part of an unrelated change.
+- Angular Material 22 uses the MDC-based components and the `mat.theme()` Sass API. Keep the existing dark theme; do not swap in a different Material theme as part of an unrelated change. `@angular/animations` and `BrowserAnimationsModule` are intentionally absent — do not re-add them.
 - `RenderingService` sets the page background on `document.body` using `Renderer2`. Prefer it over direct DOM manipulation in components.
 - `ImageService` owns the PhotoSwipe instance and closes it on `NavigationEnd`. Use the `PhotoswipeComponent` wrapper / `openImage()` flow instead of creating ad-hoc galleries.
 
@@ -104,24 +110,29 @@ Feature modules are lazy-loaded in `app-routing.module.ts`:
 
 ## Testing
 
-- `npx ng test` uses Karma and launches Chrome. In headless/CI environments use `--browsers=ChromeHeadless`.
-- The generated specs are placeholder-only. `app.component.spec.ts` asserts the old Angular welcome markup, and several service specs (for example `PageService`) omit `HttpClientTestingModule`/providers and will fail as-is. Do not use the existing suite as a regression signal; fix or add the spec relevant to your change.
-- When adding tests, use `TestBed` and provide `HttpClientTestingModule` or mock services; never make real network calls.
+- `npx ng test` uses the `@angular/build:unit-test` builder with `runner: "karma"` and launches Chrome. In headless/CI environments use `--browsers=ChromeHeadless`.
+- Tests are compiled ahead-of-time. A spec that declares a non-standalone component with `TestBed.configureTestingModule({ declarations: [...] })` still needs the component's **declaring NgModule** in `imports`, otherwise its template has no scope and the build fails with `NG8001`/`NG8002`/`NG8004`. Import `AppModule`, `CategoryModule`, `MainPageModule`, or `ImageModule` and create the component from TestBed.
+- Add `provideHttpClientTesting()` after importing a module that calls `provideHttpClient()` so HTTP calls are intercepted. Never make real network calls in tests.
+- `jasmine-core` is pinned to `~6.3.0` and `@types/jasmine` to `~6.0.0` (the versions Angular 22 scaffolds). Jasmine 7 breaks the `zone.js` Jasmine patch at runtime.
+- The existing specs cover the shell, header, feature components, and services. Use them as the regression signal and extend the relevant spec when changing behavior.
 
 ## Build and deployment
 
-- `ng build` outputs to `dist/photo-blog-front/`.
-- The production Docker image (`Dockerfile`) builds with Node 16 Alpine and serves the output with nginx using `conf/nginx.conf` and `conf/security-headers.conf`.
+- `ng build` outputs to `dist/photo-blog-front/browser`.
+- `ngx-markdown` declares `katex` and `marked-katex-extension` as optional peers. They are installed so Vite's dev-server prebundling can resolve the library's static `import('marked-katex-extension')`. The resulting katex chunk is lazy and is never requested unless katex rendering is configured. Do not remove those packages while `ngx-markdown` remains installed.
+- The production Docker image (`Dockerfile`) builds with Node 24 Alpine and serves `dist/photo-blog-front/browser` with nginx using `conf/nginx.conf` and `conf/security-headers.conf`.
 - nginx is configured for SPA routing (`/index.html` fallback), long-lived caching for JS/CSS, and no-store caching for HTML/JSON.
 - The full-stack Compose setup publishes this app on port `8090`.
 
 ## Pitfalls
 
+- **Node version:** use Node 24 LTS through fnm (`fnm use 24`). The app's `package.json` declares no engine range, but Angular 22 refuses to run on Node 18/20.
 - **Strict templates:** new template expressions must type-check. Use `*ngIf`/`async` patterns already present and avoid `any` where a model exists.
-- **No standalone components:** Angular 15 supports them, but this app uses NgModules throughout. Add new components to the appropriate module's `declarations`.
+- **NgModule scope:** because this is not a standalone app, `TranslatePipe`, `RouterModule`/`RouterTestingModule`, `CommonModule`, `MatMenuModule`, and `MarkdownModule` must be imported by the module (or test module) that uses them.
+- **`useDefineForClassFields: false`:** `tsconfig.json` keeps this setting because field initializers reference constructor-injected services (TS2729 with ES2022 class fields). Do not flip it without refactoring those fields into the constructor.
 - **Lazy loading:** register new feature routes in `app-routing.module.ts`; do not eagerly import feature components there.
 - **`all` category behavior:** `CategoryComponent` treats any category code containing `all` as "show everything" and calls `getAllImages()`. That endpoint (`allPostsExcept`) excludes category codes containing `nature`. Confirm product intent before changing this filter.
 - **`imageId` naming:** the route parameter is named `imageId` but contains a post slug and is passed to `filters[slug][$contains]`. Preserve the existing contract when editing routes.
 - **PhotoSwipe import:** `ImageService.openGallery` uses a dynamic `import('photoswipe')`; keep the library lazy-loaded rather than importing it at module top level.
-- **Legacy duplication:** `app.component.ts` makes an unused direct HTTP request, and `image.module.ts` imports `MarkdownModule` twice. Do not clean these up unless the task is specifically about that code; keep unrelated diffs focused.
-- **Node version:** use Node 18 LTS. Angular 15 does not officially support the newest Node majors.
+- **ngx-markdown:** `MarkdownModule` still works but is deprecated. Provide the service with `provideMarkdown()` in the root providers (already done in `app.module.ts`) and import `MarkdownModule` where the `<markdown>` component is used.
+- **Legacy duplication:** `app.component.ts` makes an unused direct HTTP request. Do not clean it up unless the task is specifically about that code; keep unrelated diffs focused.

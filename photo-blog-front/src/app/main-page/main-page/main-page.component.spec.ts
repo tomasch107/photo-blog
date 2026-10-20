@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 
 import { MainPageComponent } from './main-page.component';
+import { MainPageModule } from '../main-page.module';
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -8,7 +13,15 @@ describe('MainPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MainPageComponent ]
+      imports: [
+        MainPageModule,
+        RouterTestingModule
+      ],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        ...provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+      ],
     })
     .compileComponents();
 
@@ -19,5 +32,10 @@ describe('MainPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should build an aspect ratio from image dimensions', () => {
+    expect(component.getAspectRatio({ width: 1920, height: 1080 } as any)).toBe('1920 / 1080');
+    expect(component.getAspectRatio(undefined)).toBe('4 / 3');
   });
 });

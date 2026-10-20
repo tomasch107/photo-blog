@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild} from '@angular/core';
 
 import type {DataSourceArray} from 'photoswipe';
 import {Image} from "../../model/image.model";
@@ -8,7 +8,9 @@ import {ImageService} from "../service/image.service";
 @Component({
   selector: 'app-photoswipe',
   templateUrl: './photoswipe.component.html',
-  styleUrls: ['./photoswipe.component.scss']
+  styleUrls: ['./photoswipe.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class PhotoswipeComponent {
   @ViewChild('photoSwipe') photoSwipe: ElementRef | undefined;

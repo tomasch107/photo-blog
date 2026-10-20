@@ -1,27 +1,36 @@
 # PhotoBlogFront
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.6.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) and is now on **Angular 22.2** with **Node 24 LTS**.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `npm start` (or `npx ng serve`) for a dev server. Navigate to `http://localhost:4200/`. The application reloads automatically when you change source files.
+
+The dev server uses `src/environments/environment.development.ts`. It currently points at the production API; switch it to `http://localhost:1337/api` for local full-stack work.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `npx ng generate component component-name` to generate a new component. You can also use `npx ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+This app uses NgModules, so add `standalone: false` to new components and declare them in the relevant module.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `npm run build` to build the project. The production artifacts are stored in `dist/photo-blog-front/browser`.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npx ng test --watch=false --browsers=ChromeHeadless` to execute the unit tests via [Karma](https://karma-runner.github.io) and Jasmine.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+There is no e2e project configured. Add a runner (for example Playwright or Cypress) before using `ng e2e`.
+
+## Toolchain
+
+- Node 24 LTS via [fnm](https://github.com/Schniz/fnm): `fnm install 24`, `fnm use 24`.
+- Angular 22 requires Node `^22.22.3 || ^24.15.0 || >=26.0.0` and TypeScript `>=6.0 <6.1`.
 
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To get more help on the Angular CLI use `npx ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/cli) page.

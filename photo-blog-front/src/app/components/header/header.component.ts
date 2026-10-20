@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {CategoryService} from "../../services/category.service";
 import {Category} from "../../model/category.model";
 import {Router} from "@angular/router";
@@ -10,7 +10,9 @@ import {DOCUMENT} from "@angular/common";
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 

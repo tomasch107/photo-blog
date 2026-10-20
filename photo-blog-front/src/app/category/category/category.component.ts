@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {CategoryService} from "../../services/category.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {combineLatest, catchError, of, Subscription, switchMap, take} from "rxjs";
@@ -12,7 +12,9 @@ import {TranslateService} from "@ngx-translate/core";
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
-  styleUrls: ['./category.component.scss']
+  styleUrls: ['./category.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   pageSize = 12;

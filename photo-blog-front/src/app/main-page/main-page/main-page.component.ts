@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {catchError, combineLatest, of, startWith, Subject, Subscription, switchMap, tap} from "rxjs";
 import {CategoryService} from "../../services/category.service";
 import {Image, Page, Post} from "../../model/image.model";
@@ -9,7 +9,9 @@ import {environment} from "../../../environments/environment";
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  styleUrls: ['./main-page.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class MainPageComponent implements OnInit, OnDestroy {
 

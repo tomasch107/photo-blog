@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CategoryComponent } from './category/category.component';
 import {CategoryRoutingModule} from "./category-routing.module";
 import {InfiniteScrollModule} from "ngx-infinite-scroll";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslatePipe} from "@ngx-translate/core";
 
 
 
@@ -15,7 +15,7 @@ import {TranslateModule} from "@ngx-translate/core";
         CommonModule,
         CategoryRoutingModule,
         InfiniteScrollModule,
-        TranslateModule,
+        TranslatePipe,
     ]
 })
 export class CategoryModule { }

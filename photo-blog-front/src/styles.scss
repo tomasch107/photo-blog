@@ -4,21 +4,22 @@
 
 @use '@angular/material' as mat;
 
-@include mat.core();
+html {
+  color-scheme: dark;
 
-$my-primary: mat.define-palette(mat.$blue-grey-palette, 300);
-$my-accent: mat.define-palette(mat.$cyan-palette, A200, A100, A400);
-
-$my-theme: mat.define-dark-theme((
-  color: (
-    primary: $my-primary,
-    accent: $my-accent,
-  ),
-  density: 0,
-));
-
-@include mat.core-theme($my-theme);
-@include mat.all-component-themes($my-theme);
+  @include mat.theme((
+    color: (
+      primary: mat.$cyan-palette,
+      tertiary: mat.$azure-palette,
+      theme-type: dark,
+    ),
+    typography: (
+      plain-family: 'IBM Plex Mono',
+      brand-family: 'Instrument Serif',
+    ),
+    density: 0,
+  ));
+}
 
 /* ==========================================================================
    Design tokens

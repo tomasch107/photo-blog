@@ -25,7 +25,7 @@
       <ul class="nav-list">
         <ng-container *ngIf="categories$ | async as categories">
           <ng-container *ngFor="let category of categories.data">
-            <li *ngIf="!category.categories?.length">
+            <li *ngIf="!category.categories.length">
               <a
                 [routerLink]="['/categories', category.code]"
                 [class.active]="isRouterLinkActive(category)"
@@ -35,7 +35,7 @@
               </a>
             </li>
 
-            <li *ngIf="category.categories?.length" class="has-menu">
+            <li *ngIf="category.categories.length" class="has-menu">
               <button
                 type="button"
                 class="nav-link parent-category"

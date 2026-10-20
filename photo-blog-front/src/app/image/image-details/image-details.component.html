@@ -1,137 +1,146 @@
-<ng-container *ngIf="posts$ | async as posts; else detailUnavailable">
-    <main class="detail-page" id="main" tabindex="-1">
-    <ng-container *ngIf="posts.data[0] as post; else detailNotFound">
-        <a class="text-link detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
-            {{ 'image.back' | translate }}
-        </a>
+@if (post(); as post) {
+  <main class="detail-page" id="main" tabindex="-1">
+    <a class="text-link detail-back" [routerLink]="['/categories', post.category ? post.category.code : 'all']">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+      {{ 'image.back' | translate }}
+    </a>
 
-        <header class="detail-header">
-            <h1 class="display-title detail-title">{{ post.title }}</h1>
+    <header class="detail-header">
+      <h1 class="display-title detail-title">{{ post.title }}</h1>
 
-            <p class="detail-meta data-label">
-                <span *ngIf="post.date">
-                    <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
-                </span>
-                <span *ngIf="post.images.length">{{ post.images.length }} {{ getFramesCountKey(post.images.length) | translate }}</span>
-                <span *ngIf="post.category">{{ post.category.name }}</span>
-            </p>
+      <p class="detail-meta data-label">
+        @if (post.date) {
+          <span>
+            <time>{{ post.date | date:'yyyy.MM.dd' }}</time>
+          </span>
+        }
+        @if (post.images.length) {
+          <span>{{ post.images.length }} {{ getFramesCountKey(post.images.length) | translate }}</span>
+        }
+        @if (post.category) {
+          <span>{{ post.category.name }}</span>
+        }
+      </p>
+    </header>
+
+    @if (post.images.length) {
+      <figure class="plate detail-plate">
+        <button type="button" class="plate__frame detail-plate__frame" (click)="openImage(post.images)" [attr.aria-label]="'image.zoomHint' | translate">
+          @if (post.images[0]) {
+            <img [src]="getImageUrl(post.images[0])" [alt]="post.title">
+          }
+        </button>
+        <figcaption class="plate__caption">
+          <span class="plate__meta">{{ formatIndex(1) }} / {{ formatIndex(post.images.length) }}</span>
+          <span class="plate__action">
+            {{ 'image.zoomHint' | translate }}
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
+          </span>
+        </figcaption>
+      </figure>
+    }
+
+    <div class="detail-body">
+      <article class="detail-copy">
+        @if (post.description) {
+          <markdown class="prose" [data]="post.description"></markdown>
+        } @else {
+          <p class="prose detail-empty-copy">{{ 'image.descriptionFallback' | translate }}</p>
+        }
+      </article>
+
+      <aside class="detail-aside">
+        <dl class="detail-facts">
+          <div class="detail-fact">
+            <dt class="data-label">{{ 'image.object' | translate }}</dt>
+            <dd class="detail-fact__value">{{ post.title }}</dd>
+          </div>
+          @if (post.date) {
+            <div class="detail-fact">
+              <dt class="data-label">{{ 'image.captured' | translate }}</dt>
+              <dd class="detail-fact__value">{{ post.date | date:'yyyy.MM.dd' }}</dd>
+            </div>
+          }
+          @if (post.category) {
+            <div class="detail-fact">
+              <dt class="data-label">{{ 'image.collection' | translate }}</dt>
+              <dd class="detail-fact__value">{{ post.category.name }}</dd>
+            </div>
+          }
+        </dl>
+      </aside>
+    </div>
+
+    @if (post.images.length > 1) {
+      <section class="detail-gallery">
+        <header class="detail-gallery__header">
+          <h2 class="detail-gallery__title">{{ 'image.more' | translate }}</h2>
+          <span class="data-label">{{ post.images.length - 1 }}</span>
         </header>
 
-        <figure class="plate detail-plate" *ngIf="post.images.length">
-            <button type="button" class="plate__frame detail-plate__frame" (click)="openImage(post.images)" [attr.aria-label]="'image.zoomHint' | translate">
-                <img
-                  *ngIf="post.images[0]"
-                  [src]="getImageUrl(post.images[0])"
-                  [alt]="post.title">
-            </button>
-            <figcaption class="plate__caption">
-                <span class="plate__meta">{{ formatIndex(1) }} / {{ formatIndex(post.images.length) }}</span>
-                <span class="plate__action">
-                    {{ 'image.zoomHint' | translate }}
-                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
+        <ul class="detail-thumbs">
+          @for (image of galleryImages(); track image.id; let i = $index) {
+            <li>
+              <button
+                type="button"
+                class="plate detail-thumb"
+                (click)="openImage(post.images, i + 1)"
+                [attr.aria-label]="'image.openFrame' | translate: {index: formatIndex(i + 2), total: formatIndex(post.images.length)}">
+                <span class="plate__frame" [style.aspectRatio]="getAspectRatio(image)">
+                  <img [src]="getImageUrl(image, 'medium')" [alt]="post.title + ' - ' + (i + 2)" loading="lazy">
                 </span>
-            </figcaption>
-        </figure>
-
-        <div class="detail-body">
-            <article class="detail-copy">
-                <markdown class="prose" *ngIf="post.description; else noDescription" [data]="post.description">
-                </markdown>
-                <ng-template #noDescription>
-                    <p class="prose detail-empty-copy">{{ 'image.descriptionFallback' | translate }}</p>
-                </ng-template>
-            </article>
-
-            <aside class="detail-aside">
-                <dl class="detail-facts">
-                    <div class="detail-fact">
-                        <dt class="data-label">{{ 'image.object' | translate }}</dt>
-                        <dd class="detail-fact__value">{{ post.title }}</dd>
-                    </div>
-                    <div class="detail-fact" *ngIf="post.date">
-                        <dt class="data-label">{{ 'image.captured' | translate }}</dt>
-                        <dd class="detail-fact__value">{{ post.date | date:'yyyy.MM.dd' }}</dd>
-                    </div>
-                    <div class="detail-fact" *ngIf="post.category">
-                        <dt class="data-label">{{ 'image.collection' | translate }}</dt>
-                        <dd class="detail-fact__value">{{ post.category.name }}</dd>
-                    </div>
-                </dl>
-            </aside>
-        </div>
-
-        <section class="detail-gallery" *ngIf="post.images.length > 1">
-            <header class="detail-gallery__header">
-                <h2 class="detail-gallery__title">{{ 'image.more' | translate }}</h2>
-                <span class="data-label">{{ post.images.length - 1 }}</span>
-            </header>
-
-            <ul class="detail-thumbs">
-                <li *ngFor="let image of post.images | slice:1; index as i">
-                    <button
-                      type="button"
-                      class="plate detail-thumb"
-                      (click)="openImage(post.images, i + 1)"
-                      [attr.aria-label]="'image.openFrame' | translate: {index: formatIndex(i + 2), total: formatIndex(post.images.length)}">
-                        <span class="plate__frame" [style.aspectRatio]="getAspectRatio(image)">
-                            <img [src]="getImageUrl(image, 'medium')" [alt]="post.title + ' — ' + (i + 2)" loading="lazy">
-                        </span>
-                        <span class="plate__caption">
-                            <span class="plate__meta">{{ formatIndex(i + 2) }} / {{ formatIndex(post.images.length) }}</span>
-                        </span>
-                    </button>
-                </li>
-            </ul>
-        </section>
-
-        <app-photoswipe #photoSwipe></app-photoswipe>
-    </ng-container>
-
-    <ng-template #detailNotFound>
-        <div class="detail-fallback">
-            <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
-                {{ 'image.back' | translate }}
-            </a>
-
-            <h1 class="display-title detail-title">{{ 'image.notFoundTitle' | translate }}</h1>
-            <p class="detail-fallback__copy">{{ 'image.notFoundCopy' | translate }}</p>
-
-            <a class="button" [routerLink]="['/categories', 'all']">
-                {{ 'image.browseAll' | translate }}
-                <span class="button__icon" aria-hidden="true">
-                    <svg viewBox="0 0 16 16"><path d="M3 13 13 3M6 3h7v7"/></svg>
+                <span class="plate__caption">
+                  <span class="plate__meta">{{ formatIndex(i + 2) }} / {{ formatIndex(post.images.length) }}</span>
                 </span>
-            </a>
-        </div>
-    </ng-template>
-    </main>
-</ng-container>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
 
-<ng-template #detailUnavailable>
-    <main class="detail-page" id="main" tabindex="-1" *ngIf="loadFailed; else detailLoading">
-        <div class="detail-fallback">
-            <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
-                {{ 'image.back' | translate }}
-            </a>
+    <app-photoswipe></app-photoswipe>
+  </main>
+} @else if (state().loading) {
+  <span class="sr-only" role="status">{{ 'image.loading' | translate }}</span>
+  <main class="detail-page detail-page--loading" aria-hidden="true">
+    <div class="skeleton skeleton--back"></div>
+    <div class="skeleton skeleton--title"></div>
+    <div class="skeleton skeleton--meta"></div>
+    <div class="skeleton skeleton--hero"></div>
+    <div class="skeleton skeleton--copy"></div>
+  </main>
+} @else if (state().failed) {
+  <main class="detail-page" id="main" tabindex="-1">
+    <div class="detail-fallback">
+      <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+        {{ 'image.back' | translate }}
+      </a>
 
-            <h1 class="display-title detail-title">{{ 'image.errorTitle' | translate }}</h1>
-            <p class="detail-fallback__copy">{{ 'image.errorCopy' | translate }}</p>
+      <h1 class="display-title detail-title">{{ 'image.errorTitle' | translate }}</h1>
+      <p class="detail-fallback__copy">{{ 'image.errorCopy' | translate }}</p>
 
-            <button class="button" type="button" (click)="retry()">{{ 'image.retry' | translate }}</button>
-        </div>
-    </main>
-</ng-template>
+      <button class="button" type="button" (click)="retry()">{{ 'image.retry' | translate }}</button>
+    </div>
+  </main>
+} @else {
+  <main class="detail-page" id="main" tabindex="-1">
+    <div class="detail-fallback">
+      <a class="text-link detail-back" [routerLink]="['/categories', 'all']">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3 2.5 8 7 13M2.5 8h11"/></svg>
+        {{ 'image.back' | translate }}
+      </a>
 
-<ng-template #detailLoading>
-    <span class="sr-only" role="status">{{ 'image.loading' | translate }}</span>
-    <main class="detail-page detail-page--loading" aria-hidden="true">
-        <div class="skeleton skeleton--back"></div>
-        <div class="skeleton skeleton--title"></div>
-        <div class="skeleton skeleton--meta"></div>
-        <div class="skeleton skeleton--hero"></div>
-        <div class="skeleton skeleton--copy"></div>
-    </main>
-</ng-template>
+      <h1 class="display-title detail-title">{{ 'image.notFoundTitle' | translate }}</h1>
+      <p class="detail-fallback__copy">{{ 'image.notFoundCopy' | translate }}</p>
+
+      <a class="button" [routerLink]="['/categories', 'all']">
+        {{ 'image.browseAll' | translate }}
+        <span class="button__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path d="M3 13 13 3M6 3h7v7"/></svg>
+        </span>
+      </a>
+    </div>
+  </main>
+}

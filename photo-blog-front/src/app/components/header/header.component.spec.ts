@@ -1,8 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from '@ngx-translate/core';
+import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 
-import { HeaderComponent } from './header.component';
-import { AppModule } from '../../app.module';
+import {HeaderComponent} from './header.component';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -10,12 +13,16 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ AppModule ],
+      imports: [HeaderComponent],
       providers: [
+        provideRouter([]),
+        provideHttpClient(),
         provideHttpClientTesting(),
+        ...provideTranslateService({lang: 'en', fallbackLang: 'en'}),
+        ...provideTranslateHttpLoader({prefix: './assets/i18n/', suffix: '.json'}),
       ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;

@@ -1,16 +1,24 @@
-import { TestBed } from '@angular/core/testing';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppComponent } from './app.component';
-import { AppModule } from './app.module';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from '@ngx-translate/core';
+import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
+
+import {AppComponent} from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        AppModule
+        AppComponent
       ],
       providers: [
+        provideRouter([]),
+        provideHttpClient(),
         provideHttpClientTesting(),
+        ...provideTranslateService({lang: 'en', fallbackLang: 'en'}),
+        ...provideTranslateHttpLoader({prefix: './assets/i18n/', suffix: '.json'}),
       ],
     }).compileComponents();
   });

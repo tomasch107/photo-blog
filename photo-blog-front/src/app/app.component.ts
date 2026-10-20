@@ -1,63 +1,66 @@
-import { ChangeDetectionStrategy, Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
-import {DOCUMENT} from "@angular/common";
-import {HttpClient} from "@angular/common/http";
-import {Meta, Title} from "@angular/platform-browser";
-import {Observable, Subscription} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
-import {RenderingService} from "./services/rendering.service";
-import {LanguageService} from "./services/language.service";
+import {DOCUMENT} from '@angular/common';
+import {HttpClient} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, effect, inject} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Meta, Title} from '@angular/platform-browser';
+import {RouterLink, RouterOutlet} from '@angular/router';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {Observable} from 'rxjs';
+import {HeaderComponent} from './components/header/header.component';
+import {LanguageService} from './services/language.service';
+import {RenderingService} from './services/rendering.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
-  changeDetection: ChangeDetectionStrategy.Eager
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    HeaderComponent,
+    RouterLink,
+    RouterOutlet,
+    TranslatePipe
+  ]
 })
-export class AppComponent implements OnInit, OnDestroy {
-  title = 'photo-blog-front';
-  currentYear = new Date().getFullYear();
+export class AppComponent {
+  readonly title = 'photo-blog-front';
+  readonly currentYear = new Date().getFullYear();
 
   blogPost$: Observable<any> | undefined;
 
-  private subscriptions = new Subscription();
+  private readonly http = inject(HttpClient);
+  private readonly document = inject(DOCUMENT);
+  private readonly renderingService = inject(RenderingService);
+  private readonly languageService = inject(LanguageService);
+  private readonly translate = inject(TranslateService);
+  private readonly titleService = inject(Title);
+  private readonly metaService = inject(Meta);
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(
-    private http: HttpClient,
-    @Inject(DOCUMENT) private document: Document,
-    private renderingService: RenderingService,
-    private languageService: LanguageService,
-    private translate: TranslateService,
-    private titleService: Title,
-    private metaService: Meta
-  ) {
+  constructor() {
     this.translate.addLangs(LanguageService.supportedLanguages);
     this.translate.setFallbackLang('en');
 
-    this.subscriptions.add(
-      this.languageService.currentLanguage$.subscribe((language) => {
-        this.document.documentElement.lang = language;
-        this.translate.use(language);
-        this.updateMeta();
-      })
-    );
+    effect(() => {
+      const language = this.languageService.currentLanguage();
+
+      this.document.documentElement.lang = language;
+      this.translate.use(language);
+      this.updateMeta();
+    });
   }
 
   ngOnInit() {
-    this.blogPost$ = this.http.get('https://photoblogapi.bieda.it/api/posts')
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    this.blogPost$ = this.http.get('https://photoblogapi.bieda.it/api/posts');
   }
 
   private updateMeta() {
-    this.subscriptions.add(
-      this.translate.get(['meta.title', 'meta.description']).subscribe((translations) => {
+    this.translate.get(['meta.title', 'meta.description'])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((translations) => {
         this.titleService.setTitle(translations['meta.title']);
         this.metaService.updateTag({name: 'description', content: translations['meta.description']});
-      })
-    );
+      });
   }
 
   /* Anchor jumps are handled here because the app uses <base href="/">, which
@@ -79,6 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   documentClick(event: any): void {
-    this.renderingService.documentClickedTarget.next(event.target)
+    this.renderingService.documentClickedTarget.next(event.target);
   }
 }

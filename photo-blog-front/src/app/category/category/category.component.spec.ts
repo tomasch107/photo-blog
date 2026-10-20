@@ -1,11 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { provideTranslateService } from '@ngx-translate/core';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from '@ngx-translate/core';
 
-import { CategoryComponent } from './category.component';
-import { CategoryModule } from '../category.module';
+import {CategoryComponent} from './category.component';
 
 describe('CategoryComponent', () => {
   let component: CategoryComponent;
@@ -14,16 +13,16 @@ describe('CategoryComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        CategoryModule,
-        RouterTestingModule
+        CategoryComponent
       ],
       providers: [
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
-        ...provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        ...provideTranslateService({lang: 'en', fallbackLang: 'en'}),
       ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(CategoryComponent);
     component = fixture.componentInstance;

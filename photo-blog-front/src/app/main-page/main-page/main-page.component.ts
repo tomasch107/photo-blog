@@ -1,51 +1,101 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {catchError, combineLatest, of, startWith, Subject, Subscription, switchMap, tap} from "rxjs";
-import {CategoryService} from "../../services/category.service";
-import {Image, Page, Post} from "../../model/image.model";
-import {PageService} from "../../services/page.service";
-import {LanguageService} from "../../services/language.service";
-import {environment} from "../../../environments/environment";
+import {DatePipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
+import {RouterLink} from '@angular/router';
+import {TranslatePipe} from '@ngx-translate/core';
+import {catchError, map, of, startWith, switchMap} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {Image, Page, Post} from '../../model/image.model';
+import {CategoryService} from '../../services/category.service';
+import {LanguageService} from '../../services/language.service';
+import {PageService} from '../../services/page.service';
+
+interface PageState {
+  page: Page | null;
+  loading: boolean;
+  failed: boolean;
+}
+
+interface RecentState {
+  posts: Post[];
+  total: number;
+  loaded: boolean;
+  failed: boolean;
+}
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
-  standalone: false,
-  changeDetection: ChangeDetectionStrategy.Eager
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    DatePipe,
+    RouterLink,
+    TranslatePipe
+  ]
 })
-export class MainPageComponent implements OnInit, OnDestroy {
-
-  recentPosts: Post[] = [];
-  recentLoaded = false;
-  recentError = false;
-  pageLoadFailed = false;
-  totalFrames = 0;
-  skeletonItems = [1, 2, 3];
-  heroSubjectKeys = [
+export class MainPageComponent {
+  readonly skeletonItems = [1, 2, 3];
+  readonly heroSubjectKeys = [
     'main.heroSubjects.nebulae',
     'main.heroSubjects.galaxies',
     'main.heroSubjects.nightscapes'
   ];
+  readonly baseUrl = environment.baseUrl;
 
-  private subscriptions = new Subscription();
-  private recentSubscription?: Subscription;
-  private pageRetry$ = new Subject<void>();
-  baseUrl = environment.baseUrl;
+  private readonly languageService = inject(LanguageService);
+  private readonly pageService = inject(PageService);
+  private readonly categoryService = inject(CategoryService);
 
-  page$ = combineLatest([
-    this.languageService.currentLanguage$,
-    this.pageRetry$.pipe(startWith(undefined))
-  ]).pipe(
-    tap(() => {
-      this.pageLoadFailed = false;
-    }),
-    switchMap(() => this.pageService.getPageForCode('homepage').pipe(
-      catchError(() => {
-        this.pageLoadFailed = true;
-        return of(null);
-      })
-    ))
+  private readonly pageRetry = signal(0);
+  private readonly recentRetry = signal(0);
+
+  private readonly pageRequest = computed(() => ({
+    language: this.languageService.currentLanguage(),
+    retry: this.pageRetry()
+  }));
+
+  private readonly recentRequest = computed(() => ({
+    language: this.languageService.currentLanguage(),
+    retry: this.recentRetry()
+  }));
+
+  readonly pageState = toSignal(
+    toObservable(this.pageRequest).pipe(
+      switchMap(() => this.pageService.getPageForCode('homepage').pipe(
+        map((response): PageState => ({
+          page: response.data[0] ?? null,
+          loading: false,
+          failed: false
+        })),
+        catchError(() => of<PageState>({page: null, loading: false, failed: true})),
+        startWith<PageState>({page: null, loading: true, failed: false})
+      ))
+    ),
+    {initialValue: {page: null, loading: true, failed: false}}
   );
+
+  readonly recentState = toSignal(
+    toObservable(this.recentRequest).pipe(
+      switchMap(() => this.categoryService.getAllImages(1, 6).pipe(
+        map((posts): RecentState => ({
+          posts: posts.data.filter((post) => !!this.getPostImage(post)).slice(0, 3),
+          total: posts.meta?.pagination?.total ?? 0,
+          loaded: true,
+          failed: false
+        })),
+        catchError(() => of<RecentState>({posts: [], total: 0, loaded: true, failed: true})),
+        startWith<RecentState>({posts: [], total: 0, loaded: false, failed: false})
+      ))
+    ),
+    {initialValue: {posts: [], total: 0, loaded: false, failed: false}}
+  );
+
+  readonly showRecent = computed(() => {
+    const state = this.recentState();
+
+    return !state.loaded || state.posts.length > 0 || state.failed;
+  });
 
   getFramesCountKey(count: number): string {
     const lastDigit = count % 10;
@@ -82,57 +132,19 @@ export class MainPageComponent implements OnInit, OnDestroy {
     return width > 0 && height > 0 ? `${width} / ${height}` : '4 / 3';
   }
 
-  private firstImage(post: Post): Image | undefined {
-    return post.thumbnail || post.images?.[0];
-  }
-
-  constructor(
-    private languageService: LanguageService,
-    private pageService: PageService,
-    private categoryService: CategoryService
-  ) {
-  }
-
-  ngOnInit() {
-    this.loadRecentPosts();
-  }
-
   retryPage() {
-    this.pageLoadFailed = false;
-    this.pageRetry$.next();
+    this.pageRetry.update((value) => value + 1);
 
-    if (this.recentError) {
-      this.loadRecentPosts();
+    if (this.recentState().failed) {
+      this.retryRecent();
     }
   }
 
   retryRecent() {
-    this.loadRecentPosts();
+    this.recentRetry.update((value) => value + 1);
   }
 
-  private loadRecentPosts() {
-    this.recentLoaded = false;
-    this.recentError = false;
-    this.recentSubscription?.unsubscribe();
-
-    this.recentSubscription = this.languageService.currentLanguage$.pipe(
-      switchMap(() => this.categoryService.getAllImages(1, 6))
-    ).subscribe({
-      next: (posts) => {
-        this.totalFrames = posts.meta?.pagination?.total ?? 0;
-        this.recentPosts = posts.data.filter((post) => !!this.getPostImage(post)).slice(0, 3);
-        this.recentError = false;
-        this.recentLoaded = true;
-      },
-      error: () => {
-        this.recentLoaded = true;
-        this.recentError = true;
-      }
-    });
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-    this.recentSubscription?.unsubscribe();
+  private firstImage(post: Post): Image | undefined {
+    return post.thumbnail || post.images?.[0];
   }
 }

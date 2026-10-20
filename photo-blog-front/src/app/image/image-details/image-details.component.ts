@@ -1,33 +1,77 @@
-import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, ParamMap} from "@angular/router";
-import {environment} from "../../../environments/environment";
-import {catchError, Observable, of, switchMap} from "rxjs";
-import {Image, Post} from "../../model/image.model";
-import {ApiPaginatedResponse} from "../../model/category.model";
-import {ImageService} from "../service/image.service";
-import {PhotoswipeComponent} from "../photoswipe/photoswipe.component";
-import {LanguageService} from "../../services/language.service";
+import {DatePipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, computed, inject, signal, viewChild} from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {TranslatePipe} from '@ngx-translate/core';
+import {MarkdownComponent} from 'ngx-markdown';
+import {catchError, map, of, startWith, switchMap} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {ApiPaginatedResponse} from '../../model/category.model';
+import {Image, Post} from '../../model/image.model';
+import {LanguageService} from '../../services/language.service';
+import {ImageService} from '../service/image.service';
+import {PhotoswipeComponent} from '../photoswipe/photoswipe.component';
+
+interface DetailState {
+  posts: ApiPaginatedResponse<Post> | null;
+  loading: boolean;
+  failed: boolean;
+}
 
 @Component({
   selector: 'app-image-details',
   templateUrl: './image-details.component.html',
   styleUrls: ['./image-details.component.scss'],
-  standalone: false,
-  changeDetection: ChangeDetectionStrategy.Eager
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    DatePipe,
+    MarkdownComponent,
+    PhotoswipeComponent,
+    RouterLink,
+    TranslatePipe
+  ],
+  providers: [ImageService]
 })
-export class ImageDetailsComponent implements OnInit {
-  @ViewChild('photoSwipe') photoSwipe: PhotoswipeComponent | undefined;
+export class ImageDetailsComponent {
+  private readonly imageService = inject(ImageService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly languageService = inject(LanguageService);
 
-  posts$: Observable<ApiPaginatedResponse<Post> | null> | undefined;
-  loadFailed = false;
-  private currentSlug = '';
+  readonly photoSwipe = viewChild(PhotoswipeComponent);
 
-  constructor(
-    private imageService: ImageService,
-    private route: ActivatedRoute,
-    private languageService: LanguageService
-  ) {
-  }
+  private readonly retryCount = signal(0);
+
+  private readonly imageId = toSignal(
+    this.route.paramMap.pipe(map((params) => params.get('imageId'))),
+    {initialValue: null}
+  );
+
+  private readonly request = computed(() => ({
+    imageId: this.imageId(),
+    language: this.languageService.currentLanguage(),
+    retry: this.retryCount()
+  }));
+
+  readonly state = toSignal(
+    toObservable(this.request).pipe(
+      switchMap(({imageId}) => {
+        if (!imageId) {
+          return of<DetailState>({posts: null, loading: false, failed: true});
+        }
+
+        return this.imageService.getImagesForSlug(imageId).pipe(
+          map((posts): DetailState => ({posts, loading: false, failed: false})),
+          catchError(() => of<DetailState>({posts: null, loading: false, failed: true})),
+          startWith<DetailState>({posts: null, loading: true, failed: false})
+        );
+      })
+    ),
+    {initialValue: {posts: null, loading: true, failed: false}}
+  );
+
+  readonly post = computed(() => this.state().posts?.data[0] ?? null);
+
+  readonly galleryImages = computed(() => this.post()?.images.slice(1) ?? []);
 
   getFramesCountKey(count: number): string {
     const lastDigit = count % 10;
@@ -64,39 +108,11 @@ export class ImageDetailsComponent implements OnInit {
     return value < 10 ? `0${value}` : `${value}`;
   }
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      const imageId = params.get('imageId');
-      if (imageId) {
-        this.currentSlug = imageId;
-        this.loadPost();
-      }
-    })
-  }
-
   retry() {
-    if (this.currentSlug) {
-      this.loadPost();
-    }
-  }
-
-  private loadPost() {
-    this.posts$ = this.languageService.currentLanguage$.pipe(
-      switchMap(() => {
-        this.loadFailed = false;
-
-        return this.imageService.getImagesForSlug(this.currentSlug).pipe(
-          catchError(() => {
-            this.loadFailed = true;
-            return of(null);
-          })
-        );
-      })
-    );
+    this.retryCount.update((value) => value + 1);
   }
 
   openImage(images: Image[], index = 0) {
-    this.photoSwipe?.openGallery(images, index);
-
+    this.photoSwipe()?.openGallery(images, index);
   }
 }

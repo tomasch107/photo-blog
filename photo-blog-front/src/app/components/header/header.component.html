@@ -14,8 +14,8 @@
       class="mobile-nav-toggle"
       (click)="mobileToggle()"
       aria-controls="primary-navigation"
-      [attr.aria-expanded]="mobileNavOpen"
-      [attr.aria-label]="(mobileNavOpen ? 'header.closeNav' : 'header.openNav') | translate">
+      [attr.aria-expanded]="mobileNavOpen()"
+      [attr.aria-label]="(mobileNavOpen() ? 'header.closeNav' : 'header.openNav') | translate">
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
@@ -23,51 +23,56 @@
 
     <nav #nav id="primary-navigation" data-visible="false" class="primary-navigation" [attr.aria-label]="'header.primaryNav' | translate">
       <ul class="nav-list">
-        <ng-container *ngIf="categories$ | async as categories">
-          <ng-container *ngFor="let category of categories.data">
-            <li *ngIf="!category.categories.length">
-              <a
-                [routerLink]="['/categories', category.code]"
-                [class.active]="isRouterLinkActive(category)"
-                [attr.aria-current]="isRouterLinkActive(category) ? 'page' : null"
-                (click)="closeMobileNav()">
-                {{ category.name }}
-              </a>
-            </li>
-
-            <li *ngIf="category.categories.length" class="has-menu">
-              <button
-                type="button"
-                class="nav-link parent-category"
-                [class.active]="isRouterLinkActive(category)"
-                [matMenuTriggerFor]="menu">
-                {{ category.name }}
-                <svg class="nav-link__chevron" viewBox="0 0 10 10" aria-hidden="true">
-                  <path d="M2.5 3.5 5 6l2.5-2.5"/>
-                </svg>
-              </button>
-
-              <mat-menu #menu="matMenu">
+        @if (categories(); as categories) {
+          @for (category of categories; track category.id) {
+            @if (category.categories.length) {
+              <li class="has-menu">
                 <button
-                  *ngFor="let subCategory of category.categories"
-                  mat-menu-item
-                  class="subcategory"
-                  [class.active]="isRouterLinkActive(subCategory)"
-                  [attr.aria-current]="isRouterLinkActive(subCategory) ? 'page' : null"
-                  [routerLink]="['/categories', subCategory.code]"
-                  (click)="closeMobileNav()">
-                  {{ subCategory.name }}
+                  type="button"
+                  class="nav-link parent-category"
+                  [class.active]="isRouterLinkActive(category)"
+                  [matMenuTriggerFor]="menu">
+                  {{ category.name }}
+                  <svg class="nav-link__chevron" viewBox="0 0 10 10" aria-hidden="true">
+                    <path d="M2.5 3.5 5 6l2.5-2.5"/>
+                  </svg>
                 </button>
-              </mat-menu>
-            </li>
-          </ng-container>
-        </ng-container>
 
-        <li *ngIf="navFallback">
-          <a [routerLink]="['/categories', 'all']" (click)="closeMobileNav()">
-            {{ 'category.all' | translate }}
-          </a>
-        </li>
+                <mat-menu #menu="matMenu">
+                  @for (subCategory of category.categories; track subCategory.id) {
+                    <button
+                      mat-menu-item
+                      class="subcategory"
+                      [class.active]="isRouterLinkActive(subCategory)"
+                      [attr.aria-current]="isRouterLinkActive(subCategory) ? 'page' : null"
+                      [routerLink]="['/categories', subCategory.code]"
+                      (click)="closeMobileNav()">
+                      {{ subCategory.name }}
+                    </button>
+                  }
+                </mat-menu>
+              </li>
+            } @else {
+              <li>
+                <a
+                  [routerLink]="['/categories', category.code]"
+                  [class.active]="isRouterLinkActive(category)"
+                  [attr.aria-current]="isRouterLinkActive(category) ? 'page' : null"
+                  (click)="closeMobileNav()">
+                  {{ category.name }}
+                </a>
+              </li>
+            }
+          }
+        }
+
+        @if (navFallback()) {
+          <li>
+            <a [routerLink]="['/categories', 'all']" (click)="closeMobileNav()">
+              {{ 'category.all' | translate }}
+            </a>
+          </li>
+        }
       </ul>
 
       <div class="language-selector" role="group" [attr.aria-label]="'header.language' | translate">

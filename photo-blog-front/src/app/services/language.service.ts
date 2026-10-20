@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import {Injectable, signal} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +8,8 @@ export class LanguageService {
   static readonly languageStorageKey = 'lang';
   static readonly supportedLanguages = ['en', 'pl'];
 
-  currentLanguage$ = new BehaviorSubject(LanguageService.resolveLanguage());
-  constructor() { }
+  private readonly language = signal(LanguageService.resolveLanguage());
+  readonly currentLanguage = this.language.asReadonly();
 
   public changeLanguage(languageIsoCode: string) {
     if (!LanguageService.supportedLanguages.includes(languageIsoCode)) {
@@ -18,7 +17,7 @@ export class LanguageService {
     }
 
     localStorage.setItem(LanguageService.languageStorageKey, languageIsoCode);
-    this.currentLanguage$.next(languageIsoCode);
+    this.language.set(languageIsoCode);
   }
 
   private static resolveLanguage(): string {

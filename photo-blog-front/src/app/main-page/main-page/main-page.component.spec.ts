@@ -1,11 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { provideTranslateService } from '@ngx-translate/core';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from '@ngx-translate/core';
 
-import { MainPageComponent } from './main-page.component';
-import { MainPageModule } from '../main-page.module';
+import {MainPageComponent} from './main-page.component';
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -14,16 +13,16 @@ describe('MainPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        MainPageModule,
-        RouterTestingModule
+        MainPageComponent
       ],
       providers: [
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
-        ...provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        ...provideTranslateService({lang: 'en', fallbackLang: 'en'}),
       ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MainPageComponent);
     component = fixture.componentInstance;
@@ -35,7 +34,7 @@ describe('MainPageComponent', () => {
   });
 
   it('should build an aspect ratio from image dimensions', () => {
-    expect(component.getAspectRatio({ width: 1920, height: 1080 } as any)).toBe('1920 / 1080');
+    expect(component.getAspectRatio({width: 1920, height: 1080} as any)).toBe('1920 / 1080');
     expect(component.getAspectRatio(undefined)).toBe('4 / 3');
   });
 });

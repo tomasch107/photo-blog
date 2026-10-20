@@ -1,12 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideMarkdown } from 'ngx-markdown';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from '@ngx-translate/core';
+import {provideMarkdown} from 'ngx-markdown';
 
-import { ImageDetailsComponent } from './image-details.component';
-import { ImageModule } from '../image.module';
+import {ImageDetailsComponent} from './image-details.component';
 
 describe('ImageDetailsComponent', () => {
   let component: ImageDetailsComponent;
@@ -15,17 +14,17 @@ describe('ImageDetailsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ImageModule,
-        RouterTestingModule
+        ImageDetailsComponent
       ],
       providers: [
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
-        ...provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
-        ...provideMarkdown(),
+        ...provideTranslateService({lang: 'en', fallbackLang: 'en'}),
+        provideMarkdown(),
       ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ImageDetailsComponent);
     component = fixture.componentInstance;

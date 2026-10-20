@@ -12,7 +12,7 @@ The dev server uses `src/environments/environment.development.ts`. It currently 
 
 Run `npx ng generate component component-name` to generate a new component. You can also use `npx ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-This app uses NgModules, so add `standalone: false` to new components and declare them in the relevant module.
+This app uses standalone components and signals. New components should be standalone (the Angular 22 default), declare their own `imports`, and model view state with signals.
 
 ## Build
 

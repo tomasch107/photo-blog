@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "Astrophoto — archiwum głębokiego nieba",
-    "description": "Archiwum astrofotografii głębokiego nieba: galaktyki, mgławice i nocne niebo."
+    "title": "Spacephotographs — archiwum głębokiego nieba",
+    "description": "Archiwum fotografii kosmosu: galaktyki, mgławice i nocne niebo."
   },
   "app": {
     "skipToContent": "Przejdź do treści",
-    "homeAriaLabel": "Astrophoto — strona główna",
-    "footerNote": "© {{year}} Astrophoto — archiwum głębokiego nieba",
+    "homeAriaLabel": "Spacephotographs — strona główna",
+    "footerNote": "© {{year}} Spacephotographs — archiwum głębokiego nieba",
     "backToTop": "Na górę"
   },
   "header": {

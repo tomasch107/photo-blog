@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "Astrophoto — Deep Sky Archive",
-    "description": "A deep sky astrophotography archive: galaxies, nebulae, and the night sky."
+    "title": "Spacephotographs — Deep Sky Archive",
+    "description": "A space photography archive of the deep sky: galaxies, nebulae, and the night sky."
   },
   "app": {
     "skipToContent": "Skip to content",
-    "homeAriaLabel": "Astrophoto home",
-    "footerNote": "© {{year}} Astrophoto — deep sky archive",
+    "homeAriaLabel": "Spacephotographs home",
+    "footerNote": "© {{year}} Spacephotographs — deep sky archive",
     "backToTop": "Back to top"
   },
   "header": {
